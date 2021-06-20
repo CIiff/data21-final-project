@@ -46,7 +46,7 @@ Users will also be able to connect their query to a data analytic/visualisation 
 Before you continue, ensure you have met the following requirements:
 * You have installed the latest version of Python.
 * You have installed the pandas package and all other packages in the requirements.txt
-* Set up a boto3 S3 Client Server for amazon S3
+* Set up a boto3 S3 Client Server for Amazon S3
 * A connection so a SQL Server Database
 
 ## Contributors
