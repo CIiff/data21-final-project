@@ -26,7 +26,7 @@ class transformJsonFiles():
 
       
         for json_id in self.json_files_dict:
-            # logger.info(f'Tranforming {json_id}.json file')
+            logger.info(f'Tranforming {json_id}.json file')
             
             applicant = json.loads(self.json_files_dict[json_id])
            

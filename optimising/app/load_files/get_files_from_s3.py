@@ -67,7 +67,7 @@ class getFiles(connectToS3):
 
     def get_dict_of_json_files(self):
         json_dict_keyed_by_file_id = {}
-        for s3_key in self.s3_file_keylist[:100]:
+        for s3_key in self.s3_file_keylist:
             json_s3_object = self.s3_client.get_object(
                 Bucket = self.bucket_name, 
                 Key = s3_key
@@ -76,6 +76,6 @@ class getFiles(connectToS3):
 
             json_dict_keyed_by_file_id[json_file_id] = (
                 json_s3_object['Body'].read())
-            # logger.info(f'adding{s3_key} to json dict')
+            logger.info(f'adding{s3_key} to json dict')
         logger.debug(f'created json dict of {len(self.s3_file_keylist)}')
         return json_dict_keyed_by_file_id

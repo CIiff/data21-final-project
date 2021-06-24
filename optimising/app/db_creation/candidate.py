@@ -1,3 +1,5 @@
+from numpy import NaN
+from pandas._libs.tslibs import NaT
 from optimising.app.db_creation.staff import *
 from optimising.app.tranform_files.transform_applicants_json import json_df_dict
 
@@ -93,8 +95,10 @@ class candidateTable(CreateDB):
         for row in staff_sql_tbl.c.execute("SELECT staff_name,staff_id,department FROM staff"):
             df['staff_id'].replace({row[0]:str(row[1])},inplace=True)
 
-        
-        return df.replace({'NaN': None})
+        df = df.replace({'None':None})
+        df = df.replace({'nan':None})
+        print(df.head(50))
+        return df
 
 
     
