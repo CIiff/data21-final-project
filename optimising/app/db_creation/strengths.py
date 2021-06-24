@@ -18,7 +18,7 @@ class strengthsTable(CreateDB):
                     CREATE TABLE IF NOT EXISTS strengths
                             (
                             strength_id INTEGER NOT NULL PRIMARY KEY,
-                            strength STRING
+                            strength TEXT
                             );
                     
                     """)

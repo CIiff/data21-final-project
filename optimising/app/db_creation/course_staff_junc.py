@@ -51,7 +51,7 @@ class CourseStaffJunc(CreateDB):
         course_trainer_junct_df = course_trainer_junct_df.drop_duplicates(subset = ["course_name"])
 
         for row in staff_sql_tbl.c.execute("SELECT staff_name,staff_id,department FROM staff"):
-            course_trainer_junct_df['trainer'].replace({row[0]:row[1]},inplace=True)
+            course_trainer_junct_df['trainer'].replace({row[0]:str(row[1])},inplace=True)
 
         for row in course_sql_tbl.c.execute("SELECT course_name,course_id FROM course "):
             course_trainer_junct_df['course_name'].replace({row[0]:row[1]},inplace=True)

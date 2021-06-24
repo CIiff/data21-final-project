@@ -116,7 +116,7 @@ class transformAppCSV:
 
             # self.combined_applicants_df = self.combined_applicants_df.append(self.talent_csv_df_dict[key])
             self.combined_applicants_df =  pd.concat([self.combined_applicants_df, self.talent_csv_df_dict[key]], ignore_index=True)
-
+            self.combined_applicants_df = self.combined_applicants_df.replace({pd.NaT: None})
             # logging any staff names that are similar to check for mispellings
             def get_matches(name, column,limit = 500):
 

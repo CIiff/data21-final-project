@@ -1,4 +1,5 @@
 from optimising.app.db_creation.course_staff_junc import *
+# from optimising.app.db_creation.course import *
 from optimising.app.db_creation.weaknesses_junc import *
 from optimising.app.db_creation.sparta_day import *
 from optimising.app.db_creation.strength_junc import *
@@ -10,7 +11,7 @@ class weeklyPerformanceTable(CreateDB):
     def __init__(self,database):
         super().__init__(database) # SubClass initialization code
        
-        course_staff_junct.create_course_staff_junc_table()
+        # course_staff_junct.create_course_staff_junc_table()
         weaknesses_junc_sql_tbl.create_weaknessses_junc_table()
         strengths_junc_sql_tbl.create_strengths_junc_table()
         tech_junc_sql_tbl.create_tech_junc_table()
@@ -65,7 +66,7 @@ class weeklyPerformanceTable(CreateDB):
 
     def update_performance_df(self):
         df = weekly_performances_df
-        for row in course_staff_junct.c.execute("SELECT * FROM course_staff_junc"):
+        for row in course_sql_tbl.c.execute("SELECT course_name,course_id FROM course"):
             df['course_name'].replace({row[0]:row[1]},inplace=True)
 
         for row in candidate_sql_tbl.c.execute("SELECT candidate_name,candidate_id,staff_id FROM candidate"):
@@ -95,8 +96,7 @@ wk_performances_df = weekly_performance_sql_tbl.update_performance_df()
 def run_ETL_process():
 
     weekly_performance_sql_tbl.create_weekly_performance_table()
+    weekly_performance_sql_tbl.c.close()
+    weekly_performance_sql_tbl.db.close()
 
     pass
-
-
-

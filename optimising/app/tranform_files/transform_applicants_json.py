@@ -46,6 +46,8 @@ class transformJsonFiles():
             }
             self.sparta_day_df2 =  self.sparta_day_df2.append(df_inserts,ignore_index=True)
             self.sparta_day_df2['date'] = self.sparta_day_df2['date'].astype('datetime64')
+            self.sparta_day_df2['date'] = self.sparta_day_df2['date'].astype(str)
+            # self.sparta_day_df2['date'] = pd.to_datetime(self.sparta_day_df2['date'],format='%d%m%Y')
 
             # create weakness_junc ( candidate_name,weakness) -->> (candidate_id,weekness_id)
             for weakness in applicant['weaknesses']:
@@ -88,10 +90,10 @@ class transformJsonFiles():
                     self.tech_junc_df = self.tech_junc_df.append(df_inserts,ignore_index=True)
                     
         json_dataframes_dict =  {
-                'sparta_day_df':self.sparta_day_df2,
-                'weakness_df':self.weaknesses_junc_df,
-                'strength_df':self.strengths_junc_df,
-                'tech_df':self.tech_junc_df}
+                'sparta_day_df':self.sparta_day_df2.replace({pd.NaT: None}),
+                'weakness_df':self.weaknesses_junc_df.replace({pd.NaT: None}),
+                'strength_df':self.strengths_junc_df.replace({pd.NaT: None}),
+                'tech_df':self.tech_junc_df.replace({pd.NaT: None})}
 
 
         logger.info(f'Created all .json dataframes')

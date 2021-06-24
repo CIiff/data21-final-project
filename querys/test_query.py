@@ -17,7 +17,8 @@ class getInformation(CreateDB):
     def __init__(self,database):
         super().__init__(database)        # SubClass initialization code
     
-        self.data = self.c.execute("SELECT staff_name,department FROM staff ")
+        self.data = self.c.execute("SELECT rowid,staff_name,department FROM staff ")
+        #row_id is built in sqlite thing that return the rwo number of the entry
 
         pass
         

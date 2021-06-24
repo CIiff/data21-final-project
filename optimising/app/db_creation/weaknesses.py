@@ -18,7 +18,7 @@ class weaknessesTable(CreateDB):
                     CREATE TABLE IF NOT EXISTS weaknesses
                             (
                             weakness_id INTEGER NOT NULL PRIMARY KEY,
-                            weakness STRING
+                            weakness TEXT
                             );
                     
                     """)

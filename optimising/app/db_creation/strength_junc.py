@@ -21,8 +21,8 @@ class strengthsCandidateJunc(CreateDB):
     def create_table(self):
         with self.db:
             self.c.executescript("""
-                    DROP TABLE IF EXISTS weaknesses_junction;
-                    CREATE TABLE IF NOT EXISTS weaknesses_junction
+                    DROP TABLE IF EXISTS strengths_junction;
+                    CREATE TABLE IF NOT EXISTS strengths_junction
                             (
                             strength_id INTEGER,
                             candidate_id INTEGER,

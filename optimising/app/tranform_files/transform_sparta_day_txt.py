@@ -58,8 +58,9 @@ class transformTxtFiles():
 
                 self.sparta_day_df = self.sparta_day_df.append(sparta_day_details,ignore_index=True)
         self.sparta_day_df['date'] = self.sparta_day_df['date'].astype('datetime64')
+        self.sparta_day_df['date'] = self.sparta_day_df['date'].astype(str)
 
-        return self.sparta_day_df.drop_duplicates()
+        return self.sparta_day_df.drop_duplicates().replace({pd.NaT: None})
 
 
 

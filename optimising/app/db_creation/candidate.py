@@ -91,10 +91,10 @@ class candidateTable(CreateDB):
         df = df.applymap(str)
         df['staff_id'] = df['staff_name']
         for row in staff_sql_tbl.c.execute("SELECT staff_name,staff_id,department FROM staff"):
-            df['staff_id'].replace({row[0]:row[1]},inplace=True)
+            df['staff_id'].replace({row[0]:str(row[1])},inplace=True)
 
         
-        return df
+        return df.replace({'NaN': None})
 
 
     

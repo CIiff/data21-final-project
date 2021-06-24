@@ -18,7 +18,7 @@ class techTable(CreateDB):
                     CREATE TABLE IF NOT EXISTS tech
                             (
                             tech_id INTEGER NOT NULL PRIMARY KEY,
-                            tech STRING
+                            tech TEXT
                             );
                     
                     """)

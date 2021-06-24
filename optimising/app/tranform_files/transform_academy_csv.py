@@ -85,8 +85,9 @@ class transformAcedamyCSV:
                 'duration': (len(temp_course_df.columns)-2)//6
             }
             self.course_df = self.course_df.append(course_details,ignore_index=True)
+            
         
-        return self.course_df
+        return self.course_df.replace({pd.NaT: None})
 
 
     

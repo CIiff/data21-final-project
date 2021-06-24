@@ -22,10 +22,10 @@ class courseTable(CreateDB):
                     CREATE TABLE IF NOT EXISTS course
                             (
                             course_id INTEGER NOT NULL PRIMARY KEY,
-                            course_type_id INT,
+                            course_type_id INTEGER,
                             course_name TEXT,
                             start_date TEXT,
-                            duration,
+                            duration INTEGER,
                             FOREIGN KEY(course_type_id) REFERENCES course_type(course_type_id)
 
                             );
