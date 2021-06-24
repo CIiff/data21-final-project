@@ -40,9 +40,9 @@ class TransformCSVdataFrames(Logger):
                         # create new df
                         scores_weeks_dict[week_num] = df_to_transform[['name', 'trainer', col_name]].copy()
                         # rename columns
-                        scores_weeks_dict[week_num].rename(columns={'name': 'spartan_name', 'trainer': 'trainer_name',
+                        scores_weeks_dict[week_num].rename(columns={'name': 'candidate_name', 'trainer': 'trainer_name',
                                                                     col_name: sparta_attribute}, inplace=True)
-                        scores_weeks_dict[week_num]['spartan_name'] = scores_weeks_dict[week_num]['spartan_name'].str.replace("'", "''")
+                        scores_weeks_dict[week_num]['candidate_name'] = scores_weeks_dict[week_num]['candidate_name'].str.replace("'", "''")
                         # add week and course columns to comply with ERD format
                         scores_weeks_dict[week_num]['week_no'] = week_num
                         scores_weeks_dict[week_num]['course_name'] = ac_fields[0] + ' ' + ac_fields[1]

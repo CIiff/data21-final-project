@@ -150,3 +150,6 @@ password.ini
 
 #csv log
 applicants_CSVs_df_transorm.log
+
+#sqliteDB
+memory_Test.db

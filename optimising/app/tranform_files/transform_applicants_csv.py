@@ -1,33 +1,6 @@
-from string import punctuation
-import pandas as pd
-import re
-from datetime import datetime
+from optimising.app.load_files.get_files_from_s3 import getFiles,logger
 from fuzzywuzzy import process
-
-
-from app.classes.boto3_csv_load_pd import GetS3CSVinfo
-
-
-import logging
-# removing logging pointer from root
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
-
-# loggind to file
-
-file_handler = logging.FileHandler('applicants_CSVs_df_transform.log')
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
-
-# loggin to console
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
-stream_handler.setLevel(logging.INFO)
-
-logger.addHandler(file_handler)
-logger.addHandler(stream_handler)
-
+import pandas as pd
 
 
 
@@ -36,9 +9,13 @@ class transformAppCSV:
 
       def __init__(self):
 
-         self.talent_csv_info_getter = GetS3CSVinfo('data21-final-project', 'Talent/')
-         self.talent_csv_df_dict = self.talent_csv_info_getter.create_dict_of_csv_pd_dataframes()
+
+         self.talent_csvs = getFiles('data21-final-project','Talent','.csv')
+         self.talent_csvs_list = self.talent_csvs.get_list_of_files()
+         self.talent_csv_df_dict = self.talent_csvs.create_dict_of_csv_dataframes()
          self.combined_applicants_df = pd.DataFrame()
+         self.weekly_performance_df = pd.DataFrame()
+         self.course_df = pd.DataFrame()
          
       def transform_dfs(self):
 
@@ -46,7 +23,7 @@ class transformAppCSV:
             
             logger.info(f'Transforming the {key} dataframe')
 
-
+         
             # cleaning the phone_number
             self.talent_csv_df_dict[key]['phone_number'] = self.talent_csv_df_dict[key]['phone_number'].str.replace(r'[^+\w]','',regex=True)
             
@@ -77,15 +54,16 @@ class transformAppCSV:
             self.talent_csv_df_dict[key][['city']] = self.talent_csv_df_dict[key]['city'].str.title()
             #----------------------------------------------------------------------------------------------------------------------------------------------
             # cleaning the university
-            self.talent_csv_df_dict[key]['uni'] = self.talent_csv_df_dict[key]['uni'].str.replace('-',',',regex=True)
-            self.talent_csv_df_dict[key]['uni'] = self.talent_csv_df_dict[key]['uni'].str.replace(' ,',',',regex=True)
-            self.talent_csv_df_dict[key]['uni'] = self.talent_csv_df_dict[key]['uni'].str.replace('´',"'",regex=True)
-            #self.talent_csv_df_dict[key]['uni'] = self.talent_csv_df_dict[key]['uni'].str.replace('´S',"'s",regex=True)
+            
+            self.talent_csv_df_dict[key]['uni'].replace({'-':','}, inplace=True)
+            self.talent_csv_df_dict[key]['uni'].replace({' ,':','},regex=True, inplace=True)
+            self.talent_csv_df_dict[key]['uni'].replace({'´':"'"},regex=True, inplace=True)
             self.talent_csv_df_dict[key]['uni'] = self.talent_csv_df_dict[key]['uni'].str.lower()
             self.talent_csv_df_dict[key]['uni'] = self.talent_csv_df_dict[key]['uni'].str.title()
-            self.talent_csv_df_dict[key]['uni'] = self.talent_csv_df_dict[key]['uni'].str.replace("'S","'s",regex=True)
-            self.talent_csv_df_dict[key]['uni'] = self.talent_csv_df_dict[key]['uni'].str.replace("St\.","St ",regex=True)
-            self.talent_csv_df_dict[key]['uni'] = self.talent_csv_df_dict[key]['uni'].str.replace("Saint George's","St George's",regex=True)
+            self.talent_csv_df_dict[key]['uni'].replace({"'S":"'s"},regex=True, inplace=True)
+            self.talent_csv_df_dict[key]['uni'].replace({"St\.":"St "},regex=True, inplace=True)
+            self.talent_csv_df_dict[key]['uni'].replace({"Saint George's":"St George's"},regex=True, inplace=True)
+
             # cleaning the email 
             self.talent_csv_df_dict[key]['email'] = self.talent_csv_df_dict[key]['email'].str.replace(';','',regex=True)
             #----------------------------------------------------------------------------------------------------------------------------------------------
@@ -103,6 +81,7 @@ class transformAppCSV:
             # cleaning the date of birth column
             self.talent_csv_df_dict[key]['dob'] = pd.to_datetime(self.talent_csv_df_dict[key]['dob'], format='%d/%m/%Y').dt.date
             # self.talent_csv_df_dict[key]['dob'][self.talent_csv_df_dict[key]['dob'] == 'NaT'] = 'Null'
+            # self.talent_csv_df_dict[key]['dob'] = self.talent_csv_df_dict[key]['dob'].str.replace('NaT',None,regex=True)
           
 
 
@@ -151,25 +130,20 @@ class transformAppCSV:
                if match != None:
                   logger.warning(f'{name} is {match[1]}% similar to {match[0]} ')
 
-            #logging the dataframes 
-            # logger.debug(f'\n{list(self.talent_csv_df_dict[key].columns)}')  
-            # logger.debug(f'{key}\n{tabulate(self.talent_csv_df_dict[key])}')
-            # logger.debug(f'{key}\n{tabulate(self.combined_applicants_df)}')
-
             
          # return self.talent_csv_df_dict
+         logger.debug(f'Finished Dataframe Transformation')
          return self.combined_applicants_df
 
       
 
-# PRINTING RESULTS
-with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # so that console doesn't truncate dataframe results -->> print all 0-n rows! 
-   pd.set_option("expand_frame_repr",True)
+candidate_df =  transformAppCSV()
+candidate_df = candidate_df.transform_dfs()
 
-   candidate_df =  transformAppCSV()
-   candidate_df = candidate_df.transform_dfs()
+
+
+# PRINTING RESULTS
+# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # so that console doesn't truncate dataframe results -->> print all 0-n rows! 
+#    pd.set_option("expand_frame_repr",True)
   
-   
-   # logger.debug(f'\n{list(candidate_df.columns)}')  
-   # logger.debug(tabulate(candidate_df))
-   print(candidate_df.info())
+#    print(candidate_df.head())
