@@ -1,4 +1,5 @@
-from optimising.app.load_files.get_files_from_s3 import getFiles,logger,tqdm
+from optimising.app.load_files.get_files_from_s3 import getFiles,logger
+from tqdm import tqdm,trange
 from fuzzywuzzy import process
 import pandas as pd
 
@@ -12,7 +13,9 @@ class transformAppCSV:
 
          self.talent_csvs = getFiles('data21-final-project','Talent','.csv')
          self.talent_csvs_list = self.talent_csvs.get_list_of_files()
-         self.talent_csv_df_dict = self.talent_csvs.create_dict_of_csv_dataframes()
+         # self.talent_csv_df_dict = self.talent_csvs.create_dict_of_csv_dataframes()
+         self.talent_csvs.download_csv_in_chucks()
+         self.talent_csv_df_dict =  self.talent_csvs.csv_dict_keyed_by_course
          self.combined_applicants_df = pd.DataFrame()
          self.weekly_performance_df = pd.DataFrame()
          self.course_df = pd.DataFrame()

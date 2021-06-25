@@ -2,6 +2,7 @@ from optimising.app.load_files.get_files_from_s3 import getFiles,logger,pd,tqdm
 
 
 
+
 class transformTxtFiles():
 
     sparta_day_df = pd.DataFrame()

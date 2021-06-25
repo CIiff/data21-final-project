@@ -1,4 +1,5 @@
-from optimising.app.load_files.get_files_from_s3 import getFiles,logger,tqdm,trange
+from optimising.app.load_files.get_files_from_s3 import getFiles,logger
+from tqdm import  tqdm,trange
 from pprint import pprint
 import pandas as pd
 import json
@@ -13,7 +14,8 @@ class transformJsonFiles():
     def __init__(self):
         self.json_objects = getFiles('data21-final-project','Talent','.json')
         self.json_files = self.json_objects.get_list_of_files()
-        self.json_files_dict = self.json_objects.get_dict_of_json_files()
+        self.json_files_dict = self.json_objects.download_json_in_chucks()
+        self.json_files_dict = self.json_objects.json_dict_keyed_by_file_id
         self.sparta_day_df2 = pd.DataFrame()
         self.weaknesses_junc_df =pd.DataFrame()
         self.strengths_junc_df =pd.DataFrame()
@@ -25,7 +27,7 @@ class transformJsonFiles():
     def make_dataframes(self):
 
       
-        for json_id in tqdm(self.json_files_dict,unit ='json_files',desc = 'Transforming Json_files',position = 0):
+        for json_id in tqdm(self.json_files_dict,unit ='json_files',desc = 'Transforming Json_files',position = 0,total=len(self.json_files_dict)):
             # logger.info(f'Tranforming {json_id}.json file')
             
             applicant = json.loads(self.json_files_dict[json_id])

@@ -1,5 +1,6 @@
 from optimising.app.db_creation.weaknesses import *
-from optimising.app.db_creation.candidate import candidate_sql_tbl,tqdm
+from optimising.app.db_creation.candidate import candidate_sql_tbl
+from tqdm import tqdm,trange
 
 
 

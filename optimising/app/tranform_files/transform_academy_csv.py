@@ -1,4 +1,5 @@
-from optimising.app.load_files.get_files_from_s3 import getFiles,logger,tqdm
+from optimising.app.load_files.get_files_from_s3 import getFiles,logger
+from tqdm import  tqdm,trange
 from optimising.app.db_creation.logger import logger
 import pandas as pd
 from fuzzywuzzy import process
@@ -14,7 +15,9 @@ class transformAcedamyCSV:
         
         self.academy_csvs = getFiles('data21-final-project','Academy','.csv')
         self.academy_csvs_list = self.academy_csvs.get_list_of_files()
-        self.academy_csv_dfs_dict = self.academy_csvs.create_dict_of_csv_dataframes()
+        # self.academy_csv_dfs_dict = self.academy_csvs.create_dict_of_csv_dataframes()
+        self.academy_csvs.download_csv_in_chucks()
+        self.academy_csv_dfs_dict = self.academy_csvs.csv_dict_keyed_by_course
         self.weekly_performance_df = pd.DataFrame()
         self.course_df = pd.DataFrame()
   
