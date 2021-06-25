@@ -85,8 +85,9 @@ class spartaDayTable(CreateDB):
         
         self.create_table()
         self.data_entry()
+        logger.info('\nLOADING TO SPARTA_DAY SQL TABLE\n')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 

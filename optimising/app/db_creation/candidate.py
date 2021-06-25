@@ -1,8 +1,6 @@
-from numpy import NaN
-from pandas._libs.tslibs import NaT
 from optimising.app.db_creation.staff import *
 from optimising.app.tranform_files.transform_applicants_json import json_df_dict
-
+from tqdm import  tqdm
 
 
 class candidateTable(CreateDB):
@@ -80,7 +78,7 @@ class candidateTable(CreateDB):
         new_students = set(list(a)+list(b))
 
         logger.warning(f'New names from .json and academy_csv added to condidate_df\n{new_students}\n')
-        for name in new_students:
+        for name in tqdm(new_students,unit ='name',desc = 'Adding_new_candidates',position = 0):
             self.candidate_df = self.candidate_df.append({'candidate_name':name},ignore_index=True)
 
         return self.candidate_df
@@ -92,12 +90,12 @@ class candidateTable(CreateDB):
 
         df = df.applymap(str)
         df['staff_id'] = df['staff_name']
-        for row in staff_sql_tbl.c.execute("SELECT staff_name,staff_id,department FROM staff"):
+        for row in tqdm(staff_sql_tbl.c.execute("SELECT staff_name,staff_id,department FROM staff"),unit ='staff_id',desc = 'Updating_Staff_IDs',position = 0):
             df['staff_id'].replace({row[0]:str(row[1])},inplace=True)
 
         df = df.replace({'None':None})
         df = df.replace({'nan':None})
-        print(df.head(50))
+        
         return df
 
 
@@ -108,8 +106,9 @@ class candidateTable(CreateDB):
       
         self.create_table()
         self.data_entry()
+        logger.info('LOADING TO CANDIDATE SQL TABLE')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 

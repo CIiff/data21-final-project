@@ -66,8 +66,9 @@ class courseTable(CreateDB):
 
         self.create_table()
         self.data_entry()
+        logger.info('\nLOADING TO COURSE SQL TABLE\n')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 

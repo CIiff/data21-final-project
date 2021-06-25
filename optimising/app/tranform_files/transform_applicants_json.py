@@ -1,4 +1,4 @@
-from optimising.app.load_files.get_files_from_s3 import getFiles,logger
+from optimising.app.load_files.get_files_from_s3 import getFiles,logger,tqdm,trange
 from pprint import pprint
 import pandas as pd
 import json
@@ -25,8 +25,8 @@ class transformJsonFiles():
     def make_dataframes(self):
 
       
-        for json_id in self.json_files_dict:
-            logger.info(f'Tranforming {json_id}.json file')
+        for json_id in tqdm(self.json_files_dict,unit ='json_files',desc = 'Transforming Json_files',position = 0):
+            # logger.info(f'Tranforming {json_id}.json file')
             
             applicant = json.loads(self.json_files_dict[json_id])
            

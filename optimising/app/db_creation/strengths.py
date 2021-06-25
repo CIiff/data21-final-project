@@ -46,8 +46,9 @@ class strengthsTable(CreateDB):
         
         self.create_table()
         self.data_entry()
+        logger.info('\nLOADING TO STRENGTHS SQL TABLE\n')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 strengths_df = json_df_dict['strength_df'].drop_duplicates(subset = ["strengths"])

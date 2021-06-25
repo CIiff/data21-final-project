@@ -1,4 +1,4 @@
-from optimising.app.load_files.get_files_from_s3 import getFiles,logger
+from optimising.app.load_files.get_files_from_s3 import getFiles,logger,tqdm
 from optimising.app.db_creation.logger import logger
 import pandas as pd
 from fuzzywuzzy import process
@@ -23,7 +23,7 @@ class transformAcedamyCSV:
 
 
     def create_weekly_performance_df(self):
-        for key in self.academy_csv_dfs_dict:
+        for key in tqdm(self.academy_csv_dfs_dict,unit ='csv_files',desc = 'Tranforming_Academy_csv',position = 0):
             split_var = key.split('_')
             df = self.academy_csv_dfs_dict[key]
             duration = (len(df.columns)-2)//6

@@ -46,8 +46,9 @@ class techTable(CreateDB):
         
         self.create_table()
         self.data_entry()
+        logger.info('\nLOADING TO TECH SQL TABLE\n')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 tech_df = json_df_dict['tech_df'].drop_duplicates(subset = ["tech_name"])

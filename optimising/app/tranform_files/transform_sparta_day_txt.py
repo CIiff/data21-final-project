@@ -1,4 +1,4 @@
-from optimising.app.load_files.get_files_from_s3 import getFiles,logger,pd
+from optimising.app.load_files.get_files_from_s3 import getFiles,logger,pd,tqdm
 
 
 
@@ -19,8 +19,8 @@ class transformTxtFiles():
     def make_dataframe(self):
 
       
-        for sparta_day in self.txt_file_dict:
-            logger.info(f'Tranforming {sparta_day} .txt file')
+        for sparta_day in tqdm(self.txt_file_dict,unit ='txt_files',desc = 'Transforming_txt_files',position = 0):
+            # logger.debug(f'Tranforming {sparta_day} .txt file')
             
             contents = self.txt_file_dict[sparta_day]
             

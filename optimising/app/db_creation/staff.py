@@ -65,8 +65,9 @@ class staffTable(CreateDB):
         self.create_table()
         self.recruiters_data_entry()
         self.trainer_data_entry()
+        logger.info('\nLOADING TO STAFF SQL TABLE\n')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 

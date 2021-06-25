@@ -50,10 +50,10 @@ class CourseStaffJunc(CreateDB):
         course_trainer_junct_df = weekly_performances_df[['course_name','trainer']]
         course_trainer_junct_df = course_trainer_junct_df.drop_duplicates(subset = ["course_name"])
 
-        for row in staff_sql_tbl.c.execute("SELECT staff_name,staff_id,department FROM staff"):
+        for row in tqdm(staff_sql_tbl.c.execute("SELECT staff_name,staff_id,department FROM staff"),unit ='trainers',desc = 'Adding_Trainers_to_Staff',position = 0):
             course_trainer_junct_df['trainer'].replace({row[0]:str(row[1])},inplace=True)
 
-        for row in course_sql_tbl.c.execute("SELECT course_name,course_id FROM course "):
+        for row in tqdm(course_sql_tbl.c.execute("SELECT course_name,course_id FROM course "),unit ='course_id',desc = 'Updating_course_id',position = 0):
             course_trainer_junct_df['course_name'].replace({row[0]:row[1]},inplace=True)
 
         return course_trainer_junct_df
@@ -71,8 +71,9 @@ class CourseStaffJunc(CreateDB):
         self.update_course_staff_df()
         self.create_table()
         self.data_entry()
+        logger.info('\nLOADING TO COURSE_STAFF_JUNCTION SQL TABLE\n')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 

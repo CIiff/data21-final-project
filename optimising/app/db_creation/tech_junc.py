@@ -49,15 +49,15 @@ class techCandidateJunc(CreateDB):
     def update_tech_df(self):
 
         df = json_df_dict['tech_df']
-        logger.info(df.head(5))
+        # logger.info(df.head(5))
         
         for row in tech_sql_tbl.c.execute("SELECT tech,tech_id FROM tech "):
             df['tech_name'].replace({row[0]:row[1]},inplace=True)
-        logger.info(df.head(5))
+        # logger.info(df.head(5))
         for row in candidate_sql_tbl.c.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "):
             # logger.info(f'replacements {row}')
             df['candidate_name'].replace({(row[0]):str(row[1])},inplace=True)
-        logger.info(df.head(5))
+        # logger.info(df.head(5))
         return df
 
 
@@ -73,8 +73,9 @@ class techCandidateJunc(CreateDB):
         # self.update_weakness_df()
         self.create_table()
         self.data_entry()
+        logger.info('\nLOADING TO TECH_JUNCTION SQL TABLE\n')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 tech_junc_sql_tbl = techCandidateJunc('memory')

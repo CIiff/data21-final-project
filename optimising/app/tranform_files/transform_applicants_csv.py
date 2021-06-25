@@ -1,4 +1,4 @@
-from optimising.app.load_files.get_files_from_s3 import getFiles,logger
+from optimising.app.load_files.get_files_from_s3 import getFiles,logger,tqdm
 from fuzzywuzzy import process
 import pandas as pd
 
@@ -19,9 +19,9 @@ class transformAppCSV:
          
       def transform_dfs(self):
 
-         for key in self.talent_csv_df_dict.keys():
+         for key in tqdm(self.talent_csv_df_dict.keys(),unit ='Applicants_csv_files',desc = 'Tranforming Applicants_csv_files',position = 0):
             
-            logger.info(f'Transforming the {key} dataframe')
+            # logger.debug(f'Transforming the {key} dataframe')
 
          
             # cleaning the phone_number

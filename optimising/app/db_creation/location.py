@@ -47,8 +47,9 @@ class locationTable(CreateDB):
         
         self.create_table()
         self.data_entry()
+        logger.info('\nLOADING TO LOCATION SQL TABLE\n')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 location_df = sparta_day_df.drop_duplicates(subset = ["location"])

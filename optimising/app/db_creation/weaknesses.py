@@ -46,8 +46,9 @@ class weaknessesTable(CreateDB):
         
         self.create_table()
         self.data_entry()
+        logger.info('\nLOADING TO WEAKNESSES SQL TABLE\n')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 weaknesses_df = json_df_dict['weakness_df'].drop_duplicates(subset = ["weaknesses"])

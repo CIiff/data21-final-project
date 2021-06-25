@@ -1,5 +1,5 @@
 from optimising.app.db_creation.weaknesses import *
-from optimising.app.db_creation.candidate import candidate_sql_tbl
+from optimising.app.db_creation.candidate import candidate_sql_tbl,tqdm
 
 
 
@@ -47,15 +47,15 @@ class weaknessesCandidateJunc(CreateDB):
     def update_weakness_df(self):
 
         df = json_df_dict['weakness_df']
-        logger.info(df.head(5))
+        # logger.info(df.head(5))
         
         for row in weaknesses_sql_tbl.c.execute("SELECT weakness,weakness_id FROM weaknesses "):
             df['weaknesses'].replace({row[0]:row[1]},inplace=True)
-        logger.info(df.head(5))
-        for row in candidate_sql_tbl.c.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "):
+        # logger.info(df.head(5))
+        for row in tqdm(candidate_sql_tbl.c.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "),unit ='weakness',desc = 'Updating_Candidate_Weaknesses',position = 0):
             # logger.info(f'replacements {row}')
             df['candidate_name'].replace({(row[0]):str(row[1])},inplace=True)
-        logger.info(df.head(5))
+        # logger.info(df.head(5))
         return df
 
 
@@ -68,11 +68,12 @@ class weaknessesCandidateJunc(CreateDB):
 
     def create_weaknessses_junc_table(self):
 
-        # self.update_weakness_df()
+        
         self.create_table()
         self.data_entry()
+        logger.info('\nLOADING TO WEAKNESSES_JUNCTION SQL TABLE\n')
         self.db.commit()
-        self.sample_query()
+        # self.sample_query()
 
 
 
