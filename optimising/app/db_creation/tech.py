@@ -3,8 +3,8 @@ from optimising.app.db_creation.candidate import CreateDB,json_df_dict,sqldf,log
 
 class techTable(CreateDB):
 
-    def __init__(self,database):
-        super().__init__(database) # SubClass initialization code
+    def __init__(self):
+        super().__init__() # SubClass initialization code
        
 
     @staticmethod
@@ -52,7 +52,7 @@ class techTable(CreateDB):
 
 
 tech_df = json_df_dict['tech_df'].drop_duplicates(subset = ["tech_name"])
-tech_sql_tbl = techTable('memory')
+tech_sql_tbl = techTable()
 
 
 

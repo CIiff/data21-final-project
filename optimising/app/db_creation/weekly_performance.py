@@ -8,8 +8,8 @@ from optimising.app.db_creation.tech_junc import *
 
 class weeklyPerformanceTable(CreateDB):
 
-    def __init__(self,database):
-        super().__init__(database) # SubClass initialization code
+    def __init__(self):
+        super().__init__() # SubClass initialization code
        
         # course_staff_junct.create_course_staff_junc_table()
         weaknesses_junc_sql_tbl.create_weaknessses_junc_table()
@@ -91,7 +91,7 @@ class weeklyPerformanceTable(CreateDB):
         # self.sample_query()
 
 
-weekly_performance_sql_tbl = weeklyPerformanceTable('memory')
+weekly_performance_sql_tbl = weeklyPerformanceTable()
 wk_performances_df = weekly_performance_sql_tbl.update_performance_df()
 
 def run_ETL_process():

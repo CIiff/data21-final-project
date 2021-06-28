@@ -8,8 +8,8 @@ class candidateTable(CreateDB):
   
     
 
-    def __init__(self,database):
-        super().__init__(database)        # SubClass initialization code
+    def __init__(self):
+        super().__init__()        # SubClass initialization code
         staff_sql_tbl.create_staff_table()
         self.weekly_performances_df = weekly_performances_df
         self.candidate_df = candidate_df
@@ -112,7 +112,7 @@ class candidateTable(CreateDB):
 
 
 
-candidate_sql_tbl = candidateTable('memory')
+candidate_sql_tbl = candidateTable()
 sql_candidate_df = candidate_sql_tbl.update_candidate_df()
 
 

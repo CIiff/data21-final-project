@@ -9,8 +9,8 @@ from tqdm import tqdm,trange
 # creation of course staff junction table
 class weaknessesCandidateJunc(CreateDB):
 
-    def __init__(self,database):
-        super().__init__(database)        # SubClass initialization code
+    def __init__(self):
+        super().__init__()        # SubClass initialization code
         
         weaknesses_sql_tbl.create_weaknesses_table()
         
@@ -79,7 +79,7 @@ class weaknessesCandidateJunc(CreateDB):
 
 
 
-weaknesses_junc_sql_tbl = weaknessesCandidateJunc('memory')
+weaknesses_junc_sql_tbl = weaknessesCandidateJunc()
 weakness_junc_df = weaknesses_junc_sql_tbl.update_weakness_df()
 
 

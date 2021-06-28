@@ -7,8 +7,8 @@ from pandasql import sqldf
 
 class courseTypeTable(CreateDB):
 
-    def __init__(self,database):
-        super().__init__(database)        # SubClass initialization code
+    def __init__(self):
+        super().__init__()        # SubClass initialization code
         self.courses_df = courses_df
 
 
@@ -56,7 +56,7 @@ class courseTypeTable(CreateDB):
 
 courses_type_df = courses_df.drop_duplicates(subset = ["course_type"])
 
-course_type_sql_tbl = courseTypeTable('memory')
+course_type_sql_tbl = courseTypeTable()
 
 
 

@@ -8,3 +8,4 @@ fuzzywuzzy~=0.18.0
 ns~=0.1
 pyodbc~=4.0.30
 pandasql~=0.7.3
+Levenshtein~=56.0.0

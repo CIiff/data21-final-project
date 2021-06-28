@@ -12,8 +12,8 @@ from pandasql import sqldf
 class staffTable(CreateDB):
     
 
-    def __init__(self,database):
-        super().__init__(database)        # SubClass initialization code
+    def __init__(self):
+        super().__init__()        # SubClass initialization code
 
 
     @staticmethod
@@ -86,7 +86,7 @@ trainer_staff_df = trainer_df.assign(department = 'Trainer')
 
 
 # create a class instance - hence create a sql table and insert values
-staff_sql_tbl = staffTable('memory')
+staff_sql_tbl = staffTable()
 # staff_sql_tbl.create_staff_table()
 
 

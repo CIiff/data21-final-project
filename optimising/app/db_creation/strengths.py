@@ -3,8 +3,8 @@ from optimising.app.db_creation.candidate import CreateDB,json_df_dict,sqldf,log
 
 class strengthsTable(CreateDB):
 
-    def __init__(self,database):
-        super().__init__(database) # SubClass initialization code
+    def __init__(self):
+        super().__init__() # SubClass initialization code
        
 
     @staticmethod
@@ -52,7 +52,7 @@ class strengthsTable(CreateDB):
 
 
 strengths_df = json_df_dict['strength_df'].drop_duplicates(subset = ["strengths"])
-strengths_sql_tbl = strengthsTable('memory')
+strengths_sql_tbl = strengthsTable()
 
 
 

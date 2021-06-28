@@ -8,8 +8,8 @@ from optimising.app.db_creation.candidate import candidate_sql_tbl
 # creation of course staff junction table
 class techCandidateJunc(CreateDB):
 
-    def __init__(self,database):
-        super().__init__(database)        # SubClass initialization code
+    def __init__(self):
+        super().__init__()        # SubClass initialization code
         
         tech_sql_tbl.create_tech_table()
         
@@ -78,7 +78,7 @@ class techCandidateJunc(CreateDB):
         # self.sample_query()
 
 
-tech_junc_sql_tbl = techCandidateJunc('memory')
+tech_junc_sql_tbl = techCandidateJunc()
 tech_junc_df = tech_junc_sql_tbl.update_tech_df()
 
 

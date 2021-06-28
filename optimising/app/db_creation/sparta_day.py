@@ -4,8 +4,8 @@ from optimising.app.db_creation.weekly_performance import candidate_sql_tbl,json
 
 class spartaDayTable(CreateDB):
 
-    def __init__(self,database):
-        super().__init__(database) # SubClass initialization code
+    def __init__(self):
+        super().__init__() # SubClass initialization code
        
         location_sql_tbl.create_location_table()
        
@@ -100,7 +100,7 @@ print(combined_sparta_day_df.head())
 
 
 
-sparta_day_sql_tbl = spartaDayTable('memory')
+sparta_day_sql_tbl = spartaDayTable()
 sparta_day_df = sparta_day_sql_tbl.update_combined_sparta_day_df()
 
 

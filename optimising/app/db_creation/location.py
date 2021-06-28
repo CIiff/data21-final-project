@@ -4,8 +4,8 @@ from optimising.app.tranform_files.transform_sparta_day_txt import sparta_day_df
 
 class locationTable(CreateDB):
 
-    def __init__(self,database):
-        super().__init__(database) # SubClass initialization code
+    def __init__(self):
+        super().__init__() # SubClass initialization code
        
 
     @staticmethod
@@ -53,7 +53,7 @@ class locationTable(CreateDB):
 
 
 location_df = sparta_day_df.drop_duplicates(subset = ["location"])
-location_sql_tbl = locationTable('memory')
+location_sql_tbl = locationTable()
 
 
 

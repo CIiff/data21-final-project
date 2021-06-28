@@ -26,6 +26,7 @@ class transformAcedamyCSV:
 
 
     def create_weekly_performance_df(self):
+        print("")
         for key in tqdm(self.academy_csv_dfs_dict,unit ='csv_files',desc = 'Tranforming_Academy_csv',position = 0):
             split_var = key.split('_')
             df = self.academy_csv_dfs_dict[key]

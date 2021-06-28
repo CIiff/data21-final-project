@@ -5,8 +5,8 @@ from optimising.app.db_creation.course_type import *
 
 class courseTable(CreateDB):
 
-    def __init__(self,database):
-        super().__init__(database)        # SubClass initialization code
+    def __init__(self):
+        super().__init__()        # SubClass initialization code
         course_type_sql_tbl.create_course_type_table()
 
 
@@ -72,7 +72,7 @@ class courseTable(CreateDB):
 
 
 
-course_sql_tbl = courseTable('memory')
+course_sql_tbl = courseTable()
 sql_courses_df = course_sql_tbl.update_course_table()
 # course_sql_tbl.db.close()
 
