@@ -1,4 +1,4 @@
-from optimising.app.load_files.get_files_from_s3 import getFiles,logger,pd,tqdm
+from optimising_sql_server.app.load_files.get_files_from_s3 import getFiles,logger,pd,tqdm
 
 
 
@@ -10,7 +10,7 @@ class transformTxtFiles():
 
 
     def __init__(self):
-        self.txt_files = getFiles('data21-final-project','Talent','.txt')
+        self.txt_files = getFiles('data21-final-project-preassignment','Talent','.txt')
         self.txt_files_list = self.txt_files.get_list_of_files()
         self.txt_file_dict = self.txt_files.create_dict_of_txt_files()
         
