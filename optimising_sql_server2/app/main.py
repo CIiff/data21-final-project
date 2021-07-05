@@ -1,4 +1,4 @@
-from optimising_sql_server.app.db_creation.weekly_performance import *
+from optimising_sql_server2.app.db_creation.weekly_performance import *
 from datetime import datetime 
 import time
 

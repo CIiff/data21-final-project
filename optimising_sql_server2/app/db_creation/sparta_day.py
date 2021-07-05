@@ -1,5 +1,6 @@
-from optimising_sql_server.app.db_creation.location import *
-from optimising_sql_server.app.db_creation.weekly_performance import candidate_sql_tbl,json_df_dict,pd
+from optimising_sql_server2.app.db_creation.location import *
+from optimising_sql_server2.app.db_creation.weekly_performance import json_df_dict,pd
+from optimising_sql_server2.app.tranform_files.transform_sparta_day_txt import txt_sparta_day_df
 from tabulate import tabulate
 
 
@@ -17,8 +18,8 @@ class spartaDayTable(CreateDB):
     
     def create_table(self):
         with self.db:
-            self.c.execute("""
-                    DROP TABLE IF EXISTS sparta_day;
+            if 'sparta_day' not in [table[0] for table in self.engine.execute("""SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]:
+                self.engine.execute("""
                     CREATE TABLE sparta_day
                             (
                             candidate_id INT NOT NULL,
@@ -36,50 +37,47 @@ class spartaDayTable(CreateDB):
                             FOREIGN KEY(candidate_id) REFERENCES candidate(candidate_id),
                             FOREIGN KEY(location_id) REFERENCES locations(location_id),
                             PRIMARY KEY(candidate_id,date)
-
-                            );
+                            )
                     
                     """)
       
     
     def data_entry(self):
-        
-        sql_insert = """
-                INSERT INTO sparta_day(
-                    candidate_id,
-                    date,
-                    location_id,
-                    result,
-                    self_development,
-                    financial_support,
-                    geo_flex,
-                    course_interest,
-                    presentation,
-                    presentation_max,
-                    psychometrics,
-                    psychometrics_max
-                )
-                VALUES(
-                    ?,?,?,?,?,?,?,?,?,?,?,?
-                )"""
-        self.c.executemany(sql_insert,sparta_day_df.values.tolist())
+        with self.engine.connect() as connection:
+            self.pysqldf("""
+                    SELECT
+                        candidate_name AS candidate_id,
+                        location AS location_id,
+                        date,
+                        result,
+                        self_development,
+                        financial_support,
+                        geo_flex,
+                        course_interest,
+                        presentation,
+                        presentation_max,
+                        psychometrics,
+                        psychometrics_max
 
-        # .to_sql('sparta_day',con=self.db,index=False,if_exists='append')
+                    from sparta_day_df
+
+            """).to_sql('sparta_day',connection,index = False,if_exists= 'append')
+            logger.info('\nLOADING TO SPARTA_DAY SQL TABLE\n')
 
 
 
     def update_combined_sparta_day_df(self):
         df = combined_sparta_day_df
-        for row in self.c.execute("SELECT location,location_id FROM locations"):
-            df['location'].replace({row[0]:row[1]},inplace=True)
+        for row in self.engine.execute("SELECT location,location_id FROM locations"):
+            df['location'].replace({row[0]:str(row[1])},inplace=True)
 
-        for row in self.c.execute("SELECT candidate_name,candidate_id,staff_id FROM candidate"):
+        for row in self.engine.execute("SELECT candidate_name,candidate_id,staff_id FROM candidate"):
             df['candidate_name'].replace({row[0]:str(row[1])},inplace=True)
 
-        df = df.rename(columns=({'candidate_name':'candidate_id','location':'location_id'}))
-        df = df[['candidate_id','date','location_id','result','self_development',
-                'financial_support','geo_flex','course_interest',
-                'presentation','presentation_max','psychometrics','psychometrics_max']]
+        # df = df.rename(columns=({'candidate_name':'candidate_id','location':'location_id'}))
+        # df = df[['candidate_id','date','location_id','result','self_development',
+        #         'financial_support','geo_flex','course_interest',
+        #         'presentation','presentation_max','psychometrics','psychometrics_max']]
       
         #with pd.option_context('display.max_rows', None, 'display.max_columns', None):
            # print(df)
@@ -89,7 +87,7 @@ class spartaDayTable(CreateDB):
 
     def sample_query(self):
         logger.info('SPARTA_DAY_TABLE \n')
-        data = self.c.execute("SELECT * FROM sparta_day LIMIT 10")
+        data = self.engine.execute("SELECT * FROM sparta_day LIMIT 10")
         for row in data:
             logger.info(row)
         return data
@@ -97,22 +95,12 @@ class spartaDayTable(CreateDB):
     def create_sparta_day_table(self):
         
         self.create_table()
-        self.db.commit()
         self.data_entry()
-        logger.info('\nLOADING TO SPARTA_DAY SQL TABLE\n')
-        self.db.commit()
         # self.sample_query()
-
-
+        pass
 
 
 combined_sparta_day_df = (pd.merge(txt_sparta_day_df,json_df_dict['sparta_day_df'])).drop_duplicates()
-
-
-with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-    # print(tabulate(txt_sparta_day_df))
-    print(tabulate(json_df_dict['sparta_day_df']))
-
 
 
 sparta_day_sql_tbl = spartaDayTable()
@@ -121,6 +109,9 @@ sparta_day_df = sparta_day_sql_tbl.update_combined_sparta_day_df()
 
 
 
+# with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+#     print(tabulate(txt_sparta_day_df.head()))
+#     print(tabulate(json_df_dict['sparta_day_df'].head()))
 
 
 

@@ -1,5 +1,5 @@
-from optimising_sql_server.app.db_creation.strengths import *
-from optimising_sql_server.app.db_creation.candidate import candidate_sql_tbl,tqdm
+from optimising_sql_server2.app.db_creation.strengths import *
+from optimising_sql_server2.app.db_creation.candidate import tqdm
 
 
 
@@ -20,68 +20,61 @@ class strengthsCandidateJunc(CreateDB):
 
     def create_table(self):
         with self.db:
-            self.c.execute("""
-                    DROP TABLE IF EXISTS strengths_junction;
-                    CREATE TABLE strengths_junction
-                            (
-                            strength_id INT,
-                            candidate_id INT,
-                            FOREIGN KEY(strength_id) REFERENCES strengths(strength_id)
-                            ON DELETE SET NULL,
-                            FOREIGN KEY(candidate_id) REFERENCES candidate(candidate_id)
-                            ON DELETE SET NULL );
-                            
-                            """)
+            if 'strengths_junction' not in [table[0] for table in self.engine.execute("""SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]:
+                self.engine.execute("""
+                        CREATE TABLE strengths_junction
+                                (
+                                strength_id INT,
+                                candidate_id INT,
+                                FOREIGN KEY(strength_id) REFERENCES strengths(strength_id)
+                                ON DELETE SET NULL,
+                                FOREIGN KEY(candidate_id) REFERENCES candidate(candidate_id)
+                                ON DELETE SET NULL );
+                                
+                                """)
+                logger.info('CREATING STRENGTHS_JUNCTION SQL TABLE')
 
     def data_entry(self):
-        
-        sql_insert = """
-                INSERT INTO strengths_junction(
-                    candidate_id,
-                    strength_id
-                )
-                VALUES(
-                    ?,?
-                )"""
-        self.c.executemany(sql_insert,strengths_junc_df.values.tolist())
-            
-        # .to_sql('strengths_junction',con=self.db,index=False,if_exists='append')
+        with self.engine.connect() as connection:
+            self.pysqldf("""
+                    SELECT
+                        candidate_name AS candidate_id,
+                        strengths AS strength_id
+
+                    from strengths_junc_df
+                    """).to_sql('strengths_junction',connection,index = False,if_exists= 'append')
+            logger.info('\nLOADING TO STRENGTHS_JUNC SQL TABLE\n')
     
     
+
     def update_strengths_df(self):
 
         df = json_df_dict['strength_df']
-        # logger.info(df.head(5))
         
-        for row in self.c.execute("SELECT strength,strength_id FROM strengths "):
-            df['strengths'].replace({row[0]:row[1]},inplace=True)
-        # logger.info(df.head(5))
-        for row in tqdm(self.c.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "),unit ='strengths',desc = 'Updating_Candidate_Strengths',position = 0):
-            # logger.info(f'replacements {row}')
+        
+        for row in self.engine.execute("SELECT strength,strength_id FROM strengths "):
+            df['strengths'].replace({row[0]:str(row[1])},inplace=True)
+        
+        for row in tqdm(self.engine.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "),unit ='strengths',desc = 'Updating_Candidate_Strengths',position = 0):
+            
             df['candidate_name'].replace({(row[0]):str(row[1])},inplace=True)
-        # logger.info(df.head(5))
-        df = df.rename(columns=({'candidate_name':'candidate_id','strengths':'strength_id'}))
+        
         return df
 
 
     def sample_query(self):
         logger.info('STREGNTH_JUNCTION_TABLE \n')
-        data = self.c.execute("SELECT * FROM strengths_junction LIMIT 10")
+        data = self.engine.execute("SELECT * FROM strengths_junction LIMIT 10")
         for row in data:
             logger.info(row)
         return data
 
     def create_strengths_junc_table(self):
 
-        # self.update_weakness_df()
+        
         self.create_table()
-        self.db.commit()
         self.data_entry()
-        logger.info('\nLOADING TO STRENGTHS_JUNC SQL TABLE\n')
-        self.db.commit()
         # self.sample_query()
-
-
 
 
 strengths_junc_sql_tbl = strengthsCandidateJunc()

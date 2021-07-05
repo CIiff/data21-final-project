@@ -1,4 +1,4 @@
-from optimising_sql_server.app.db_creation.candidate import CreateDB,json_df_dict,sqldf,logger
+from optimising_sql_server2.app.db_creation.candidate import *
 
 
 class techTable(CreateDB):
@@ -12,36 +12,36 @@ class techTable(CreateDB):
         return sqldf(q,globals())
     
     def create_table(self):
-        # with self.db:
-            self.c.execute("""
-                    DROP TABLE IF EXISTS tech;
-                    CREATE TABLE tech
-                            (
-                            tech_id int IDENTITY(1,1) PRIMARY KEY,
-                            tech VARCHAR(20)
-                            )
+        with self.db:
+            if 'tech' not in [table[0] for table in self.engine.execute("""SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]:
+                self.engine.execute("""
                     
-                    """)
+                        CREATE TABLE tech
+                                (
+                                tech_id int IDENTITY(1,1) PRIMARY KEY,
+                                tech VARCHAR(20)
+                                )
+                        
+                        """)
+                logger.info('CREATING TECH SQL TABLE')
       
     
     def data_entry(self):
+        with self.engine.connect() as connection:
+            self.pysqldf("""
+                    SELECT
+                    
+                        tech_name AS tech
+            
+                    from tech_df
+                    """).to_sql('tech',connection,index = False,if_exists= 'append')
+            logger.info('\nLOADING TO TECH SQL TABLE\n')
         
-        sql_insert = """
-                INSERT INTO tech(
-                 
-                    tech
-                )
-                VALUES
-                (
-                    ?
-                )"""
-        self.c.executemany(sql_insert,tech_df)
-        # .to_sql('tech',con=self.db,index=False,if_exists='append')
 
 
     def sample_query(self):
         logger.info('TECH_TABLE \n')
-        data = self.c.execute("SELECT tech,tech_id FROM tech LIMIT 10")
+        data = self.engine.execute("SELECT tech,tech_id FROM tech LIMIT 10")
         for row in data:
             logger.info(row)
         return data
@@ -49,16 +49,12 @@ class techTable(CreateDB):
     def create_tech_table(self):
         
         self.create_table()
-        self.db.commit()
         self.data_entry()
-        logger.info('\nLOADING TO TECH SQL TABLE\n')
-        self.db.commit()
         # self.sample_query()
 
 
 tech_df = json_df_dict['tech_df'].drop_duplicates(subset = ["tech_name"])
 tech_df = tech_df["tech_name"]
-tech_df = [[tech] for tech in tech_df.values.tolist()]
 tech_sql_tbl = techTable()
 
 

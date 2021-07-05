@@ -1,5 +1,5 @@
-from optimising_sql_server.app.db_creation.candidate import CreateDB,json_df_dict,sqldf,logger
-from optimising_sql_server.app.tranform_files.transform_sparta_day_txt import txt_sparta_day_df
+from optimising_sql_server2.app.db_creation.candidate import CreateDB,json_df_dict,sqldf,logger
+from optimising_sql_server2.app.tranform_files.transform_sparta_day_txt import txt_sparta_day_df
 
 
 class locationTable(CreateDB):
@@ -14,33 +14,32 @@ class locationTable(CreateDB):
     
     def create_table(self):
         with self.db:
-            self.c.execute("""
-                    DROP TABLE IF EXISTS locations;
-                    CREATE TABLE locations
-                            (
-                            location_id int IDENTITY(1,1) PRIMARY KEY,
-                            location VARCHAR(30)
-                            );
-                    """)
-      
+            if 'locations' not in [table[0] for table in self.engine.execute("""SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]:
+                self.engine.execute("""
+                        CREATE TABLE locations
+                                (
+                                location_id int IDENTITY(1,1) PRIMARY KEY,
+                                location VARCHAR(30)
+                                );
+                        """)
+                logger.info('CREATING LOCATIONS SQL TABLE')
+        
     
     def data_entry(self):
-        
-        sql_insert = """
-                INSERT INTO locations(
-                 
-                    location
-                )
-                VALUES(
-                    ?
-                )"""
-        self.c.executemany(sql_insert,location_df)
-        # .to_sql('locations',con=self.db,index=False,if_exists='append')
+        with self.engine.connect() as connection:
+            self.pysqldf("""
+                    SELECT
+                    
+                        location
+            
+                    from location_df
+            """).to_sql('locations',connection,index = False,if_exists= 'append')
+            logger.info('\nLOADING TO LOCATIONS SQL TABLE\n')
 
 
     def sample_query(self):
         logger.info('LOCATION_TABLE \n')
-        data = self.c.execute("SELECT location_id,location FROM locations LIMIT 10")
+        data = self.engine.execute("SELECT location_id,location FROM locations LIMIT 10")
         for row in data:
             logger.info(row)
         return data
@@ -48,16 +47,12 @@ class locationTable(CreateDB):
     def create_location_table(self):
         
         self.create_table()
-        self.db.commit()
         self.data_entry()
-        logger.info('\nLOADING TO LOCATION SQL TABLE\n')
-        self.db.commit()
         # self.sample_query()
 
 
 location_df = txt_sparta_day_df.drop_duplicates(subset = ["location"])
 location_df = location_df["location"]
-location_df = [[location] for location in location_df.values.tolist()]
 location_sql_tbl = locationTable()
 
 

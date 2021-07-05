@@ -13,7 +13,7 @@ class candidateTable(CreateDB):
         staff_sql_tbl.create_staff_table()
         self.weekly_performances_df = weekly_performances_df
         self.candidate_df = candidate_df
-        # print(candidate_df.head())
+       
 
     def create_table(self):
         with self.db:
@@ -96,7 +96,7 @@ class candidateTable(CreateDB):
 
         df = df.applymap(str)
         df['staff_id'] = df['staff_name']
-        for row in tqdm(self.db.execute("SELECT staff_name,staff_id,department FROM staff"),unit ='staff_id',desc = 'Updating_Staff_IDs',position = 0):
+        for row in tqdm(self.engine.execute("SELECT staff_name,staff_id,department FROM staff"),unit ='staff_id',desc = 'Updating_Staff_IDs',position = 0):
             df['staff_id'].replace({row[0]:str(row[1])},inplace=True)
 
         df = df.replace({'None':None})
@@ -106,8 +106,6 @@ class candidateTable(CreateDB):
         print(f'\n{df.head(3)}')
         return df
 
-
-    
 
     def create_candidate_table(self):
 
@@ -119,6 +117,6 @@ class candidateTable(CreateDB):
 
 candidate_sql_tbl = candidateTable()
 sql_candidate_df = candidate_sql_tbl.update_candidate_df()
-# candidate_sql_tbl.create_candidate_table()
+
 
 

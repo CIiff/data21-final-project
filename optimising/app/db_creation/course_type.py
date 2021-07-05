@@ -36,6 +36,10 @@ class courseTypeTable(CreateDB):
                 from courses_type_df
         """).to_sql('course_type',con=self.db,index=False,if_exists='append')
 
+
+
+        
+
     def sample_query(self):
         logger.info('COURSE_TYPE_TABLE \n')
         data = course_type_sql_tbl.c.execute("SELECT type,course_type_id FROM course_type LIMIT 10")

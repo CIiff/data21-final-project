@@ -71,9 +71,9 @@ db=engine.connect()
 
 
 
-dbs = [db[0] for db in db.execute('SELECT name FROM sys.databases')]
+dbs = [db[0] for db in engine.execute('SELECT name FROM sys.databases')]
 print(dbs)
 
-tables = [table[0] for table in db.execute("""SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]
+tables = [table[0] for table in engine.execute("""SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]
 
 print(tables)

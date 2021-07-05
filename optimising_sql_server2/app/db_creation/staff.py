@@ -22,10 +22,9 @@ class staffTable(CreateDB):
         return sqldf(q,globals())
 
     def create_table(self):
-        with self.engine.connect():
+        with self.db:
             if 'staff' not in [table[0] for table in self.engine.execute("""SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]:
                 self.engine.execute("""
-        
                         CREATE TABLE staff
                         (
                             
@@ -34,22 +33,29 @@ class staffTable(CreateDB):
                             department VARCHAR(130)
                             
 
-                        );
+                        )
                         """)
    
     def recruiters_data_entry(self):
         with self.engine.connect() as connection:
             self.pysqldf("""
-                SELECT
-                    staff_name,
-                    department
-                from recruiting_staff_df
+                        SELECT
+                            staff_name,
+                            department
+                        from recruiting_staff_df
                         """).to_sql('staff',connection,index = False,if_exists= 'append')
            
 
 
-    def trainer_data_entry(self):
+    def staff_data_entry(self):
         with self.engine.connect() as connection:
+            self.pysqldf("""
+                        SELECT
+                            staff_name,
+                            department
+                        from recruiting_staff_df
+                        """).to_sql('staff',connection,index = False,if_exists= 'append')
+
             self.pysqldf("""
                             SELECT
                                 staff_name,
@@ -73,10 +79,8 @@ class staffTable(CreateDB):
 
     def create_staff_table(self):
 
-        self.create_table()
-        
-        self.recruiters_data_entry()
-        self.trainer_data_entry()
+        self.create_table()     
+        self.staff_data_entry()
         # self.sample_query()
 
 
@@ -105,9 +109,8 @@ trainer_staff_df = trainer_staff_df[['staff_name','department']]
 
 
 
-# create a class instance - hence create a sql table and insert values
 staff_sql_tbl = staffTable()
-# staff_sql_tbl.create_staff_table()
+
 
 
 
