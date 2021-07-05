@@ -47,6 +47,12 @@ db = pyodbc.connect(CONNECTION_STRING)
 #create cursor
 c = db.cursor()
 
+dbs = [db for db in c.execute('SELECT name FROM sys.databases')]
+print(dbs)
+
+# for db in dbs:
+#         print(db)
+
 # for driver in pyodbc.drivers():
 #   print(driver)
 
@@ -56,26 +62,3 @@ c = db.cursor()
 
 # for x in res :
 #   print(x)
-
-c.execute("""
-              DROP TABLE IF EXISTS candidate;
-              CREATE TABLE candidate(
-                      candidate_id int IDENTITY(1,1) PRIMARY KEY,
-                      candidate_name VARCHAR(100),
-                      gender VARCHAR(10),
-                      dob DATETIME,
-                      email VARCHAR(MAX),
-                      city VARCHAR(MAX),
-                      address VARCHAR(MAX),
-                      postcode VARCHAR(10),
-                      phone_number VARCHAR(15),
-                      uni_name VARCHAR(MAX),
-                      degree_result VARCHAR(10),
-                      staff_id INT
-                      )
-              
-              """)
-c.commit()
-
-# c.execute("DROP TABLE candidate")
-c.commit()
