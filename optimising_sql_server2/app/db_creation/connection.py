@@ -43,12 +43,12 @@ class CreateDB:
      self.engine.execute(f'USE {self.database}')
      self.engine.connect().execution_options(autocommit=False)
     
-    #  for i in self.engine.execute('select DB_NAME() as [Current Database]'):
-    #     logger.info(f'Connected to {i}\n')
+     for i in self.engine.execute('select DB_NAME() as [Current Database]'):
+        logger.info(f'Connecting to {i}\n')
 
     def check_for_db(self):
         dbs = [db[0] for db in self.engine.execute('SELECT name FROM sys.databases')]
-        logger.info(dbs)
+        # logger.info(dbs)
         # global databaseName
         if  self.database not in dbs:
             logger.info(f'Creating new database: {self.database}')

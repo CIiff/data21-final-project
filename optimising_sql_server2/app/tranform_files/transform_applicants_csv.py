@@ -13,7 +13,6 @@ class transformAppCSV:
 
          self.talent_csvs = getFiles('data21-final-project-preassignment','Talent','.csv')
          self.talent_csvs_list = self.talent_csvs.get_list_of_files()
-         # self.talent_csv_df_dict = self.talent_csvs.create_dict_of_csv_dataframes()
          self.talent_csvs.download_csv_in_chucks()
          self.talent_csv_df_dict =  self.talent_csvs.csv_dict_keyed_by_course
          self.combined_applicants_df = pd.DataFrame()
@@ -83,11 +82,7 @@ class transformAppCSV:
             #----------------------------------------------------------------------------------------------------------------------------------------------
             # cleaning the date of birth column
             self.talent_csv_df_dict[key]['dob'] = pd.to_datetime(self.talent_csv_df_dict[key]['dob'], format='%d/%m/%Y').dt.date
-            # self.talent_csv_df_dict[key]['dob'][self.talent_csv_df_dict[key]['dob'] == 'NaT'] = 'Null'
-            # self.talent_csv_df_dict[key]['dob'] = self.talent_csv_df_dict[key]['dob'].str.replace('NaT',None,regex=True)
           
-
-
             # dropping unwanted columns to keep only the data we want 
             self.talent_csv_df_dict[key].drop(columns=['id','invited_date','month_short','invite_year','month'],axis=1, inplace=True)
 
@@ -134,7 +129,6 @@ class transformAppCSV:
                   logger.warning(f'{name} is {match[1]}% similar to {match[0]} ')
 
             
-         # return self.talent_csv_df_dict
          logger.debug(f'Finished Dataframe Transformation')
          return self.combined_applicants_df
 
@@ -144,9 +138,3 @@ candidate_df =  transformAppCSV()
 candidate_df = candidate_df.transform_dfs()
 
 
-
-# PRINTING RESULTS
-# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # so that console doesn't truncate dataframe results -->> print all 0-n rows! 
-#    pd.set_option("expand_frame_repr",True)
-  
-#    print(candidate_df.head())

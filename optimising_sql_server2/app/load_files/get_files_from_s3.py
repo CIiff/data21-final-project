@@ -100,7 +100,7 @@ class getFiles(connectToS3):
 
     def download_json_in_chucks(self):
         logger.info('\nDownloading json_files')
-        results = thread_map(self.get_dict_of_json_files,self.s3_file_keylist[:10],max_workers = 500)
+        results = thread_map(self.get_dict_of_json_files,self.s3_file_keylist,max_workers = 500)
         # results = ThreadPool(600).imap_unordered(self.get_dict_of_json_files,self.s3_file_keylist)
         # for i,r in tqdm(enumerate(results,1),desc='Downloading Json_files',position=0):
         #     print(r,'\t',end='' if i% 4 else '\n')

@@ -55,7 +55,6 @@ class courseTable(CreateDB):
             df['course_type'].replace({row[0]:str(row[1])},inplace=True)
 
         df = df.rename(columns=({'course_type':'course_type_id'}))
-        print(df.head())
         return df
      
 
