@@ -13,7 +13,7 @@ class transformAcedamyCSV:
 
     def __init__(self):
         
-        self.academy_csvs = getFiles('data21-final-project','Academy','.csv')
+        self.academy_csvs = getFiles('data21-final-project-preassignment','Academy','.csv')
         self.academy_csvs_list = self.academy_csvs.get_list_of_files()
         # self.academy_csv_dfs_dict = self.academy_csvs.create_dict_of_csv_dataframes()
         self.academy_csvs.download_csv_in_chucks()

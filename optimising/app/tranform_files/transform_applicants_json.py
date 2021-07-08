@@ -12,7 +12,7 @@ class transformJsonFiles():
 
 
     def __init__(self):
-        self.json_objects = getFiles('data21-final-project','Talent','.json')
+        self.json_objects = getFiles('data21-final-project-preassignment','Talent','.json')
         self.json_files = self.json_objects.get_list_of_files()
         self.json_files_dict = self.json_objects.download_json_in_chucks()
         self.json_files_dict = self.json_objects.json_dict_keyed_by_file_id

@@ -11,7 +11,7 @@ class transformAppCSV:
       def __init__(self):
 
 
-         self.talent_csvs = getFiles('data21-final-project','Talent','.csv')
+         self.talent_csvs = getFiles('data21-final-project-preassignment','Talent','.csv')
          self.talent_csvs_list = self.talent_csvs.get_list_of_files()
          # self.talent_csv_df_dict = self.talent_csvs.create_dict_of_csv_dataframes()
          self.talent_csvs.download_csv_in_chucks()
