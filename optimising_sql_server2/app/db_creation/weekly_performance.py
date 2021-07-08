@@ -63,28 +63,31 @@ class weeklyPerformanceTable(CreateDB):
                         imaginative
 
                     from wk_performances_df
-            """).to_sql('weekly_performance',connection,index = False,if_exists= 'append')
+            """).to_sql('weekly_performance',connection,index = False,if_exists= 'append',chunksize= 500)
             logger.info('\nLOADING TO WEEEKLY_PERFORMANCES SQL TABLE\n')
 
 
 
 
     def update_performance_df(self):
-        df = weekly_performances_df
-        for row in self.engine.execute("SELECT course_name,course_id FROM course"):
-            df['course_name'].replace({row[0]:str(row[1])},inplace=True)
+        if weekly_performances_df.empty == False:
+            df = weekly_performances_df
+            if df.empty == False:
+                for row in self.engine.execute("SELECT course_name,course_id FROM course"):
+                    df['course_name'].replace({row[0]:str(row[1])},inplace=True)
 
-        for row in self.engine.execute("SELECT candidate_name,candidate_id,staff_id FROM candidate"):
-            df['name'].replace({row[0]:str(row[1])},inplace=True)
-        
-        df = df.dropna(thresh=6)
-        df = df.replace({NaN:None})
-        
-        # df = df.rename(columns=({'name':'candidate_id','course_name':'course_id'}))
-        # df = df[['candidate_id','course_id','week_no','analytic','independent',
-        #         'determined','professional','studious','imaginative']]
+                for row in self.engine.execute("SELECT candidate_name,candidate_id,staff_id FROM candidate"):
+                    df['name'].replace({row[0]:str(row[1])},inplace=True)
+                
+                df = df.dropna(thresh=6)
+                df = df.replace({NaN:None})
 
-        return df
+                return df
+        else:
+            return pd.DataFrame
+     
+
+        
 
 
     def sample_query(self):
@@ -97,7 +100,10 @@ class weeklyPerformanceTable(CreateDB):
     def create_weekly_performance_table(self):
         
         self.create_table()
-        self.data_entry()
+        if wk_performances_df.empty == False:
+            self.data_entry()
+        else:
+            logger.info('No new weekly_performance data')
         # self.sample_query()
 
 

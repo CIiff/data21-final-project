@@ -1,10 +1,15 @@
-from optimising_sql_server.app.load_files.s3connection import connectToS3
-from optimising_sql_server.app.db_creation.logger import logger
+from optimising_sql_server2.app.load_files.s3connection import connectToS3
+from optimising_sql_server2.app.tranform_files.new_files_download import get_new_files_list
+from optimising_sql_server2.app.db_creation.logger import logger
 from tqdm.contrib.concurrent import thread_map,process_map
 from multiprocessing.pool import ThreadPool
 from colorama import Fore
 from tqdm import tqdm
 import pandas as pd
+from pathlib import Path
+import pandas as pd
+import csv
+import os
 
 
 # sparta_days_txt = GetS3CSVinfo('data21-final-project', 'Academy/')
@@ -25,7 +30,9 @@ class getFiles(connectToS3):
         self.json_dict_keyed_by_file_id = {}
         self.csv_dict_keyed_by_course = {}
         self.bucket = self.s3_resource.Bucket(self.bucket_name)
-        self.s3_file_keylist = self.get_list_of_files()
+        self.file_keylist = self.get_list_of_files()
+        self.s3_file_keylist = get_new_files_list(self.file_keylist)
+        
 
     # Method creates a list of csv file locations with the specified class S3 bucket and subdirectory
     def get_list_of_files(self):
@@ -101,6 +108,7 @@ class getFiles(connectToS3):
     def download_json_in_chucks(self):
         logger.info('\nDownloading json_files')
         results = thread_map(self.get_dict_of_json_files,self.s3_file_keylist,max_workers = 500)
+        
         # results = ThreadPool(600).imap_unordered(self.get_dict_of_json_files,self.s3_file_keylist)
         # for i,r in tqdm(enumerate(results,1),desc='Downloading Json_files',position=0):
         #     print(r,'\t',end='' if i% 4 else '\n')

@@ -47,12 +47,17 @@ class locationTable(CreateDB):
     def create_location_table(self):
         
         self.create_table()
-        self.data_entry()
+        if txt_sparta_day_df.empty == False:
+            self.data_entry()
+        else: 
+            logger.info('No new location to load')
         # self.sample_query()
 
-
-location_df = txt_sparta_day_df.drop_duplicates(subset = ["location"])
-location_df = location_df["location"]
+if txt_sparta_day_df.empty == False:
+    location_df = txt_sparta_day_df.drop_duplicates(subset = ["location"])
+    if location_df.empty == False:
+        location_df = location_df["location"]
+        
 location_sql_tbl = locationTable()
 
 

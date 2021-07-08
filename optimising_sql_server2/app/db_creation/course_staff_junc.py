@@ -48,19 +48,21 @@ class CourseStaffJunc(CreateDB):
     
     
     def update_course_staff_df(self):
+        if weekly_performances_df.empty == False:
+            course_trainer_junct_df = weekly_performances_df[['course_name','trainer']]
+            course_trainer_junct_df = course_trainer_junct_df.drop_duplicates(subset = ["course_name"])
 
-        course_trainer_junct_df = weekly_performances_df[['course_name','trainer']]
-        course_trainer_junct_df = course_trainer_junct_df.drop_duplicates(subset = ["course_name"])
+            for row in tqdm(self.engine.execute("SELECT staff_name,staff_id,department FROM staff"),unit ='trainers',desc = 'Adding_Trainers_to_Staff',position = 0):
+                course_trainer_junct_df['trainer'].replace({row[0]:str(row[1])},inplace=True)
 
-        for row in tqdm(self.engine.execute("SELECT staff_name,staff_id,department FROM staff"),unit ='trainers',desc = 'Adding_Trainers_to_Staff',position = 0):
-            course_trainer_junct_df['trainer'].replace({row[0]:str(row[1])},inplace=True)
+            for row in tqdm(self.engine.execute("SELECT course_name,course_id FROM course "),unit ='course_id',desc = 'Updating_course_id',position = 0):
+                course_trainer_junct_df['course_name'].replace({row[0]:str(row[1])},inplace=True)
 
-        for row in tqdm(self.engine.execute("SELECT course_name,course_id FROM course "),unit ='course_id',desc = 'Updating_course_id',position = 0):
-            course_trainer_junct_df['course_name'].replace({row[0]:str(row[1])},inplace=True)
-
-        course_trainer_junct_df = course_trainer_junct_df.rename(columns={'course_name':'course_id','trainer':'staff_id'})
-        
-        return course_trainer_junct_df
+            course_trainer_junct_df = course_trainer_junct_df.rename(columns={'course_name':'course_id','trainer':'staff_id'})
+            
+            return course_trainer_junct_df
+        else:
+            return pd.DataFrame()
 
 
     def sample_query(self):
@@ -72,9 +74,12 @@ class CourseStaffJunc(CreateDB):
 
     def create_course_staff_junc_table(self):
         
-        self.update_course_staff_df()
+        # self.update_course_staff_df()
         self.create_table()
-        self.data_entry()
+        if course_trainer_junct_df.empty == False:
+            self.data_entry()
+        else:
+            logger.info('No data to load into course_staff_junc')
         # self.sample_query()
 
 

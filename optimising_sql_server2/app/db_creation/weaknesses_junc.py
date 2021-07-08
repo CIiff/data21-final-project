@@ -46,19 +46,21 @@ class weaknessesCandidateJunc(CreateDB):
             logger.info('\nLOADING TO WEAKNESSES_JUNCTION SQL TABLE\n')
     
     def update_weakness_df(self):
-
-        df = json_df_dict['weakness_df']
-        # logger.info(df.head(5))
-        
-        for row in self.engine.execute("SELECT weakness,weakness_id FROM weaknesses "):
-            df['weaknesses'].replace({row[0]:row[1]},inplace=True)
-        # logger.info(df.head(5))
-        for row in tqdm(self.engine.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "),unit ='weakness',desc = 'Updating_Candidate_Weaknesses',position = 0):
-            # logger.info(f'replacements {row}')
-            df['candidate_name'].replace({(row[0]):str(row[1])},inplace=True)
-        # logger.info(df.head(5))
-        # df = df.rename(columns=({'candidate_name':'candidate_id','weaknesses':'weakness_id'}))
-        return df
+        if json_df_dict != {}:
+            df = json_df_dict['weakness_df']
+            # logger.info(df.head(5))
+            if df.empty == False:
+                for row in self.engine.execute("SELECT weakness,weakness_id FROM weaknesses "):
+                    df['weaknesses'].replace({row[0]:row[1]},inplace=True)
+                # logger.info(df.head(5))
+                for row in tqdm(self.engine.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "),unit ='weakness',desc = 'Updating_Candidate_Weaknesses',position = 0):
+                    # logger.info(f'replacements {row}')
+                    df['candidate_name'].replace({(row[0]):str(row[1])},inplace=True)
+                # logger.info(df.head(5))
+                # df = df.rename(columns=({'candidate_name':'candidate_id','weaknesses':'weakness_id'}))
+                return df
+        else:
+            return pd.DataFrame()
 
 
     def sample_query(self):
@@ -70,10 +72,16 @@ class weaknessesCandidateJunc(CreateDB):
 
     def create_weaknessses_junc_table(self):
 
-        
-        self.create_table()
-        self.data_entry()
+        try:
+            self.create_table()
+            if weakness_junc_df.empty == False:
+                self.data_entry()
+            else:
+                logger.info('No new data to load to Weaknesses_junction table')
         # self.sample_query()
+        except AttributeError:
+            pass
+
 
 
 

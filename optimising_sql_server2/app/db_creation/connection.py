@@ -32,7 +32,7 @@ driver= 'ODBC Driver 17 for SQL Server'
 class CreateDB:
 
     databaseName = 'master'
-    database = 'Data21Final'
+    database = 'new_db'
 
     def __init__(self):
      

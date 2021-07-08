@@ -79,8 +79,11 @@ class staffTable(CreateDB):
 
     def create_staff_table(self):
 
-        self.create_table()     
-        self.staff_data_entry()
+        self.create_table()   
+        if len(candidate_df.values) > 0 or len(weekly_performances_df.values) > 0: 
+            self.staff_data_entry()
+        else:
+            logger.info('No new staff data')
         # self.sample_query()
 
 
@@ -89,23 +92,23 @@ class staffTable(CreateDB):
 candidate_df = candidate_df.applymap(str)
 
 # set up the talent talent staff members dataframe
-staff_df = candidate_df.drop_duplicates(subset = ["staff_name"])
-staff_df = staff_df[staff_df['staff_name'] != 'nan']
-staff_df = staff_df[staff_df['staff_name'] != 'None']
-staff_df = staff_df[staff_df['staff_name'] != NaN]
-recruiting_staff_df = staff_df.assign(department= 'Talent')
-recruiting_staff_df = recruiting_staff_df[['staff_name','department']]
-recruiting_staff_df = recruiting_staff_df.dropna()
+if candidate_df.empty == False:
+    staff_df = candidate_df.drop_duplicates(subset = ["staff_name"])
+    staff_df = staff_df[staff_df['staff_name'] != 'nan']
+    staff_df = staff_df[staff_df['staff_name'] != 'None']
+    staff_df = staff_df[staff_df['staff_name'] != NaN]
+    recruiting_staff_df = staff_df.assign(department= 'Talent')
+    recruiting_staff_df = recruiting_staff_df[['staff_name','department']]
+    recruiting_staff_df = recruiting_staff_df.dropna()
 
-print(recruiting_staff_df.values.tolist())
-#set up the trainers dataframe
-trainer_df = weekly_performances_df.drop_duplicates(subset = ['trainer'])
-trainer_df = trainer_df[trainer_df['trainer'] != 'nan']
-trainer_df = trainer_df[trainer_df['trainer'] != None]
-trainer_staff_df = trainer_df.assign(department = 'Trainer')
-trainer_staff_df = trainer_staff_df.rename(columns={'trainer':'staff_name'})
-trainer_staff_df = trainer_staff_df[['staff_name','department']]
-
+    print(recruiting_staff_df.values.tolist())
+    #set up the trainers dataframe
+    trainer_df = weekly_performances_df.drop_duplicates(subset = ['trainer'])
+    trainer_df = trainer_df[trainer_df['trainer'] != 'nan']
+    trainer_df = trainer_df[trainer_df['trainer'] != None]
+    trainer_staff_df = trainer_df.assign(department = 'Trainer')
+    trainer_staff_df = trainer_staff_df.rename(columns={'trainer':'staff_name'})
+    trainer_staff_df = trainer_staff_df[['staff_name','department']]
 
 
 

@@ -61,29 +61,24 @@ class spartaDayTable(CreateDB):
 
                     from sparta_day_df
 
-            """).to_sql('sparta_day',connection,index = False,if_exists= 'append')
+            """).to_sql('sparta_day',connection,index = False,if_exists= 'append',chunksize= 500)
             logger.info('\nLOADING TO SPARTA_DAY SQL TABLE\n')
 
 
 
     def update_combined_sparta_day_df(self):
-        df = combined_sparta_day_df
-        for row in self.engine.execute("SELECT location,location_id FROM locations"):
-            df['location'].replace({row[0]:str(row[1])},inplace=True)
+        if txt_sparta_day_df.empty == False:
+            df = combined_sparta_day_df
+            for row in self.engine.execute("SELECT location,location_id FROM locations"):
+                df['location'].replace({row[0]:str(row[1])},inplace=True)
 
-        for row in self.engine.execute("SELECT candidate_name,candidate_id,staff_id FROM candidate"):
-            df['candidate_name'].replace({row[0]:str(row[1])},inplace=True)
-
-        # df = df.rename(columns=({'candidate_name':'candidate_id','location':'location_id'}))
-        # df = df[['candidate_id','date','location_id','result','self_development',
-        #         'financial_support','geo_flex','course_interest',
-        #         'presentation','presentation_max','psychometrics','psychometrics_max']]
-      
-        #with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-           # print(df)
+            for row in self.engine.execute("SELECT candidate_name,candidate_id,staff_id FROM candidate"):
+                df['candidate_name'].replace({row[0]:str(row[1])},inplace=True)
+            return df
             
-        return df
-
+        else:
+            logger.info('No New data on Sparta Days')
+            return pd.DataFrame()
 
     def sample_query(self):
         logger.info('SPARTA_DAY_TABLE \n')
@@ -95,12 +90,14 @@ class spartaDayTable(CreateDB):
     def create_sparta_day_table(self):
         
         self.create_table()
-        self.data_entry()
+        if sparta_day_df.empty == False:
+            self.data_entry()
         # self.sample_query()
         pass
 
 
-combined_sparta_day_df = (pd.merge(txt_sparta_day_df,json_df_dict['sparta_day_df'])).drop_duplicates()
+if txt_sparta_day_df.empty == False :
+    combined_sparta_day_df = (pd.merge(txt_sparta_day_df,json_df_dict['sparta_day_df'])).drop_duplicates()
 
 
 sparta_day_sql_tbl = spartaDayTable()

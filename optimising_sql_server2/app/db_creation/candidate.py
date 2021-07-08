@@ -61,7 +61,7 @@ class candidateTable(CreateDB):
                         degree_result, 
                         staff_id
                     from sql_candidate_df
-            """).to_sql('candidate',connection,index = False,if_exists= 'append')
+            """).to_sql('candidate',connection,index = False,if_exists= 'append',chunksize= 500)
             logger.info('LOADING TO CANDIDATE SQL TABLE')
 
     
@@ -75,43 +75,54 @@ class candidateTable(CreateDB):
         
 
     def add_new_names(self):
-        candidate_list = set(self.candidate_df['candidate_name'].tolist())
-        spartan_list = set(self.weekly_performances_df['name'].tolist())
-        spartan_list2 =set(json_df_dict['sparta_day_df']['candidate_name'].tolist())
+        if json_df_dict != {} or candidate_df.empty == False:
+            candidate_list = set(self.candidate_df['candidate_name'].tolist())
+            spartan_list = set(self.weekly_performances_df['name'].tolist())
+            spartan_list2 =set(json_df_dict['sparta_day_df']['candidate_name'].tolist())
 
-        a = spartan_list.difference(candidate_list)
-        b = spartan_list2.difference(candidate_list)
-        new_students = set(list(a)+list(b))
+            a = spartan_list.difference(candidate_list)
+            b = spartan_list2.difference(candidate_list)
+            new_students = set(list(a)+list(b))
 
-        logger.warning(f'New names from .json and academy_csv added to condidate_df\n{new_students}\n')
-        for name in tqdm(new_students,unit ='name',desc = 'Adding_new_candidates',position = 0):
-            self.candidate_df = self.candidate_df.append({'candidate_name':name},ignore_index=True)
+            logger.warning(f'New names from .json and academy_csv added to condidate_df\n{new_students}\n')
+            for name in tqdm(new_students,unit ='name',desc = 'Adding_new_candidates',position = 0):
+                self.candidate_df = self.candidate_df.append({'candidate_name':name},ignore_index=True)
 
-        return self.candidate_df
+            return self.candidate_df
+        else:
+            return pd.DataFrame()
 
 
     def update_candidate_df(self):
+        try:
+            df = self.add_new_names()
+        
+            if df.empty == False:
+                df = df.applymap(str)
+                df['staff_id'] = df['staff_name']
+                for row in tqdm(self.engine.execute("SELECT staff_name,staff_id,department FROM staff"),unit ='staff_id',desc = 'Updating_Staff_IDs',position = 0):
+                    df['staff_id'].replace({row[0]:str(row[1])},inplace=True)
 
-        df = self.add_new_names()
+                df = df.replace({'None':None})
+                df = df.replace({'nan':None})
+                df = df.drop(['staff_name', 'date'], axis = 1)
 
-        df = df.applymap(str)
-        df['staff_id'] = df['staff_name']
-        for row in tqdm(self.engine.execute("SELECT staff_name,staff_id,department FROM staff"),unit ='staff_id',desc = 'Updating_Staff_IDs',position = 0):
-            df['staff_id'].replace({row[0]:str(row[1])},inplace=True)
+                # print(f'\n{df.head(3)}')
+                return df
+            else:
 
-        df = df.replace({'None':None})
-        df = df.replace({'nan':None})
-        df = df.drop(['staff_name', 'date'], axis = 1)
-
-        print(f'\n{df.head(3)}')
-        return df
+                logger.info('No new names to add')
+                return pd.DataFrame()
+        except KeyError:
+            return pd.DataFrame()
 
 
     def create_candidate_table(self):
-
         self.create_table()
-        self.data_entry()
-        # self.sample_query()
+        # if self.candidate_df != None :
+        if sql_candidate_df.empty == False:
+            self.data_entry()
+            # self.sample_query()
 
 
 

@@ -35,7 +35,7 @@ class strengthsTable(CreateDB):
                     strengths AS strength
           
                 from strengths_df
-                """).to_sql('strengths',connection,index = False,if_exists= 'append')
+                """).to_sql('strengths',connection,index = False,if_exists= 'append',chunksize= 500)
         logger.info('\nLOADING TO STRENGTHS SQL TABLE\n')
 
 
@@ -52,12 +52,18 @@ class strengthsTable(CreateDB):
     def create_strengths_table(self):
         
         self.create_table()
-        self.data_entry()
+        print(strengths_df) 
+        if strengths_df.empty == False:
+            self.data_entry()
+        else:
+            logger.info('No new strengths data to load')
         # self.sample_query()
 
+if json_df_dict != {}:
+    strengths_df = json_df_dict['strength_df'].drop_duplicates(subset = ["strengths"])
+    if strengths_df.empty == False:
+        strengths_df = strengths_df["strengths"]
 
-strengths_df = json_df_dict['strength_df'].drop_duplicates(subset = ["strengths"])
-strengths_df = strengths_df["strengths"]
 strengths_sql_tbl = strengthsTable()
 
 

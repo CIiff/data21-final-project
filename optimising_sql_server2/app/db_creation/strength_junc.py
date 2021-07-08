@@ -48,18 +48,22 @@ class strengthsCandidateJunc(CreateDB):
     
 
     def update_strengths_df(self):
-
-        df = json_df_dict['strength_df']
-        
-        
-        for row in self.engine.execute("SELECT strength,strength_id FROM strengths "):
-            df['strengths'].replace({row[0]:str(row[1])},inplace=True)
-        
-        for row in tqdm(self.engine.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "),unit ='strengths',desc = 'Updating_Candidate_Strengths',position = 0):
+        if len(json_df_dict) > 0:
+            df = json_df_dict['strength_df']
+            if df.empty == False:
             
-            df['candidate_name'].replace({(row[0]):str(row[1])},inplace=True)
+                for row in self.engine.execute("SELECT strength,strength_id FROM strengths "):
+                    df['strengths'].replace({row[0]:str(row[1])},inplace=True)
+                
+                for row in tqdm(self.engine.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "),unit ='strengths',desc = 'Updating_Candidate_Strengths',position = 0):
+                    
+                    df['candidate_name'].replace({(row[0]):str(row[1])},inplace=True)
+                
+                return df
+                
+            else:
+                return pd.DataFrame()
         
-        return df
 
 
     def sample_query(self):
@@ -73,7 +77,11 @@ class strengthsCandidateJunc(CreateDB):
 
         
         self.create_table()
-        self.data_entry()
+        print(strengths_junc_df)
+        if strengths_junc_df.empty == False:
+            self.data_entry()
+        else:
+            logger.info('No stregths junction data')
         # self.sample_query()
 
 

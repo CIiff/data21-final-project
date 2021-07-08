@@ -50,18 +50,22 @@ class courseTypeTable(CreateDB):
         return data
 
     def create_course_type_table(self):
-
+      try:
         self.create_table()
-        self.data_entry()
+        if courses_type_df.empty == False:
+            self.data_entry()
+        else:
+            logger.info('No course_type data to load')
         # self.sample_query()
+      except NameError:
+          pass
 
 
-
-
-courses_type_df = courses_df.drop_duplicates(subset = ["course_type"])
-courses_type_df = courses_type_df.rename(columns=({"course_type":"type"}))
-courses_type_df = courses_type_df["type"]
-# courses_type_df = [[course] for course in courses_type_df.values.tolist()]
+if courses_df.empty == False:
+    courses_type_df = courses_df.drop_duplicates(subset = ["course_type"])
+    courses_type_df = courses_type_df.rename(columns=({"course_type":"type"}))
+    courses_type_df = courses_type_df["type"]
+    # courses_type_df = [[course] for course in courses_type_df.values.tolist()]
 
 
 course_type_sql_tbl = courseTypeTable()

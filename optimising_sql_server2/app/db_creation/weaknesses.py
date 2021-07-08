@@ -35,7 +35,7 @@ class weaknessesTable(CreateDB):
                         weaknesses AS weakness
             
                     from weaknesses_df
-            """).to_sql('weaknesses',connection,index = False,if_exists= 'append')
+            """).to_sql('weaknesses',connection,index = False,if_exists= 'append',chunksize= 500)
             logger.info('\nLOADING TO WEAKNESSES SQL TABLE\n')
 
 
@@ -49,12 +49,17 @@ class weaknessesTable(CreateDB):
     def create_weaknesses_table(self):
         
         self.create_table()
-        self.data_entry()
+        if weaknesses_df.empty == False:
+            self.data_entry()
+        else:
+            logger.info('No new Weaknesses data')
         # self.sample_query()
 
+if json_df_dict != {}:
+    weaknesses_df = json_df_dict['weakness_df'].drop_duplicates(subset = ["weaknesses"])
+    if weaknesses_df.empty == False:
+        weaknesses_df = weaknesses_df["weaknesses"]
 
-weaknesses_df = json_df_dict['weakness_df'].drop_duplicates(subset = ["weaknesses"])
-weaknesses_df = weaknesses_df["weaknesses"]
 weaknesses_sql_tbl = weaknessesTable()
 
 

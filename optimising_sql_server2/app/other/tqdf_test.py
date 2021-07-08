@@ -1,5 +1,6 @@
 # from time import sleep
 from tqdm import tqdm, trange
+import pandas as pd
 # from concurrent.futures import ThreadPoolExecutor
 
 # L = list(range(9))
@@ -19,3 +20,5 @@ from tqdm import tqdm, trange
 #         p.map(progresser, L)
 
 
+df = pd.DataFrame()
+print(len(df.values))

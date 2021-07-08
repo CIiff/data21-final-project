@@ -1,4 +1,5 @@
 from optimising_sql_server2.app.db_creation.course_type import *
+import pandas as pd
 # from optimising_sql_server2.app.db_creation.connection import CreateDB
 
 
@@ -50,12 +51,15 @@ class courseTable(CreateDB):
         
                
     def update_course_table(self):
-        df = courses_df
-        for row in self.engine.execute("SELECT type,course_type_id FROM course_type "):
-            df['course_type'].replace({row[0]:str(row[1])},inplace=True)
+        if courses_df.empty == False:
+            df = courses_df
+            for row in self.engine.execute("SELECT type,course_type_id FROM course_type "):
+                df['course_type'].replace({row[0]:str(row[1])},inplace=True)
 
-        df = df.rename(columns=({'course_type':'course_type_id'}))
-        return df
+            df = df.rename(columns=({'course_type':'course_type_id'}))
+            return df
+        else:
+            return pd.DataFrame()
      
 
     def sample_query(self):
@@ -67,10 +71,15 @@ class courseTable(CreateDB):
         
 
     def create_course_table(self):
-
-        self.create_table()
-        self.data_entry()
-        # self.sample_query()
+        try:
+            self.create_table()
+            if sql_courses_df.empty == False:
+                self.data_entry()
+            else:
+                logger.info('No course data to load')
+            # self.sample_query()
+        except NameError:
+            pass
 
 
 

@@ -34,7 +34,7 @@ class techTable(CreateDB):
                         tech_name AS tech
             
                     from tech_df
-                    """).to_sql('tech',connection,index = False,if_exists= 'append')
+                    """).to_sql('tech',connection,index = False,if_exists= 'append',chunksize= 500)
             logger.info('\nLOADING TO TECH SQL TABLE\n')
         
 
@@ -49,12 +49,17 @@ class techTable(CreateDB):
     def create_tech_table(self):
         
         self.create_table()
-        self.data_entry()
+        if tech_df.empty == False:
+            self.data_entry()
+        else:
+            logger.info('No new tech data to load')
         # self.sample_query()
 
-
-tech_df = json_df_dict['tech_df'].drop_duplicates(subset = ["tech_name"])
-tech_df = tech_df["tech_name"]
+if json_df_dict != {}:
+    tech_df = json_df_dict['tech_df'].drop_duplicates(subset = ["tech_name"])
+    if tech_df.empty == False:
+        tech_df = tech_df["tech_name"]
+        
 tech_sql_tbl = techTable()
 
 
