@@ -11,19 +11,18 @@ import numpy as np
 class weeklyPerformanceTable(CreateDB):
 
     def __init__(self):
-        super().__init__() # SubClass initialization code
-       
+        super().__init__()  # SubClass initialization code
+
         course_staff_junct.create_course_staff_junc_table()
         weaknesses_junc_sql_tbl.create_weaknessses_junc_table()
         strengths_junc_sql_tbl.create_strengths_junc_table()
         tech_junc_sql_tbl.create_tech_junc_table()
         sparta_day_sql_tbl.create_sparta_day_table()
-        
 
     @staticmethod
     def pysqldf(q):
-        return sqldf(q,globals())
-    
+        return sqldf(q, globals())
+
     def create_table(self):
         if 'weekly_performance' not in [table[0] for table in self.engine.execute("""SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]:
             with self.db:
@@ -46,8 +45,7 @@ class weeklyPerformanceTable(CreateDB):
                                 )
                         """)
                 logger.info('CREATING WEEKLY_PERFORMANCE SQL TABLE')
-      
-    
+
     def data_entry(self):
         with self.engine.connect() as connection:
             self.pysqldf("""
@@ -63,32 +61,26 @@ class weeklyPerformanceTable(CreateDB):
                         imaginative
 
                     from wk_performances_df
-            """).to_sql('weekly_performance',connection,index = False,if_exists= 'append',chunksize= 500)
+            """).to_sql('weekly_performance', connection, index=False, if_exists='append', chunksize=500)
             logger.info('\nLOADING TO WEEEKLY_PERFORMANCES SQL TABLE\n')
-
-
-
 
     def update_performance_df(self):
         if weekly_performances_df.empty == False:
             df = weekly_performances_df
             if df.empty == False:
                 for row in self.engine.execute("SELECT course_name,course_id FROM course"):
-                    df['course_name'].replace({row[0]:str(row[1])},inplace=True)
+                    df['course_name'].replace(
+                        {row[0]: str(row[1])}, inplace=True)
 
                 for row in self.engine.execute("SELECT candidate_name,candidate_id,staff_id FROM candidate"):
-                    df['name'].replace({row[0]:str(row[1])},inplace=True)
-                
+                    df['name'].replace({row[0]: str(row[1])}, inplace=True)
+
                 df = df.dropna(thresh=6)
-                df = df.replace({NaN:None})
+                df = df.replace({NaN: None})
 
                 return df
         else:
             return pd.DataFrame
-     
-
-        
-
 
     def sample_query(self):
         logger.info('WEEKLY_PERFOMANCE_TABLE \n')
@@ -98,7 +90,7 @@ class weeklyPerformanceTable(CreateDB):
         return data
 
     def create_weekly_performance_table(self):
-        
+
         self.create_table()
         if wk_performances_df.empty == False:
             self.data_entry()
@@ -110,6 +102,7 @@ class weeklyPerformanceTable(CreateDB):
 weekly_performance_sql_tbl = weeklyPerformanceTable()
 wk_performances_df = weekly_performance_sql_tbl.update_performance_df()
 
+
 def run_ETL_process():
 
     weekly_performance_sql_tbl.create_weekly_performance_table()
@@ -117,4 +110,3 @@ def run_ETL_process():
     weekly_performance_sql_tbl.db.close()
 
     pass
-

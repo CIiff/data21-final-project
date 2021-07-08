@@ -4,13 +4,12 @@ from optimising_sql_server2.app.db_creation.candidate import *
 class techTable(CreateDB):
 
     def __init__(self):
-        super().__init__() # SubClass initialization code
-       
+        super().__init__()  # SubClass initialization code
 
     @staticmethod
     def pysqldf(q):
-        return sqldf(q,globals())
-    
+        return sqldf(q, globals())
+
     def create_table(self):
         with self.db:
             if 'tech' not in [table[0] for table in self.engine.execute("""SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]:
@@ -24,8 +23,7 @@ class techTable(CreateDB):
                         
                         """)
                 logger.info('CREATING TECH SQL TABLE')
-      
-    
+
     def data_entry(self):
         with self.engine.connect() as connection:
             self.pysqldf("""
@@ -34,10 +32,8 @@ class techTable(CreateDB):
                         tech_name AS tech
             
                     from tech_df
-                    """).to_sql('tech',connection,index = False,if_exists= 'append',chunksize= 500)
+                    """).to_sql('tech', connection, index=False, if_exists='append', chunksize=500)
             logger.info('\nLOADING TO TECH SQL TABLE\n')
-        
-
 
     def sample_query(self):
         logger.info('TECH_TABLE \n')
@@ -47,7 +43,7 @@ class techTable(CreateDB):
         return data
 
     def create_tech_table(self):
-        
+
         self.create_table()
         if tech_df.empty == False:
             self.data_entry()
@@ -55,12 +51,10 @@ class techTable(CreateDB):
             logger.info('No new tech data to load')
         # self.sample_query()
 
+
 if json_df_dict != {}:
-    tech_df = json_df_dict['tech_df'].drop_duplicates(subset = ["tech_name"])
+    tech_df = json_df_dict['tech_df'].drop_duplicates(subset=["tech_name"])
     if tech_df.empty == False:
         tech_df = tech_df["tech_name"]
-        
+
 tech_sql_tbl = techTable()
-
-
-

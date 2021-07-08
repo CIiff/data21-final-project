@@ -4,8 +4,6 @@ from pprint import pprint
 import urllib
 
 
-
-
 import pyodbc
 
 # server = 'localhost,1433'
@@ -34,14 +32,12 @@ import pyodbc
 #   print(x)
 
 
-
-
 databaseName = 'Data21Final'
 username = 'SA'
 password = 'Passw0rd2018'
 server = 'localhost'
-port ='1433'
-driver= 'ODBC Driver 17 for SQL Server'
+port = '1433'
+driver = 'ODBC Driver 17 for SQL Server'
 # CONNECTION_STRING = 'DRIVER='+driver+';SERVER='+server+';DATABASE='+databaseName+';UID='+username+';PWD='+ password
 
 # #Create/Open a Connection to Microsoft's SQL Server
@@ -65,15 +61,17 @@ driver= 'ODBC Driver 17 for SQL Server'
 # # for x in res :
 # #   print(x)
 
-connect_string = urllib.parse.quote_plus(f'DRIVER={driver};Server={server},{port};Database={databaseName};UID=SA;PWD=Passw0rd2018')
-engine = sqlalchemy.create_engine(f'mssql+pyodbc:///?odbc_connect={connect_string}', fast_executemany=True)
-db=engine.connect()
-
+connect_string = urllib.parse.quote_plus(
+    f'DRIVER={driver};Server={server},{port};Database={databaseName};UID=SA;PWD=Passw0rd2018')
+engine = sqlalchemy.create_engine(
+    f'mssql+pyodbc:///?odbc_connect={connect_string}', fast_executemany=True)
+db = engine.connect()
 
 
 dbs = [db[0] for db in engine.execute('SELECT name FROM sys.databases')]
 print(dbs)
 
-tables = [table[0] for table in engine.execute("""SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]
+tables = [table[0] for table in engine.execute(
+    """SELECT *FROM SYSOBJECTS WHERE xtype = 'U';""")]
 
 print(tables)
