@@ -68,7 +68,7 @@ class getFiles(connectToS3):
     def download_csv_in_chucks(self):
         logger.info('\nDownloading csv_files')
         results = thread_map(self.create_dict_of_csv_dataframes,
-                             self.s3_file_keylist, max_workers=30)
+                             self.s3_file_keylist[:6], max_workers=30)
         # results = tqdm(ThreadPool(30).imap_unordered(self.create_dict_of_csv_dataframes,(tqdm(self.s3_file_keylist[:50]))),desc='Downloading csv_files')
         # for i,r in enumerate(results,1):
         #     print(r,'\t',end='' if i% 2 else '\n')
@@ -105,7 +105,7 @@ class getFiles(connectToS3):
     def download_json_in_chucks(self):
         logger.info('\nDownloading json_files')
         results = thread_map(self.get_dict_of_json_files,
-                             self.s3_file_keylist, max_workers=500)
+                             self.s3_file_keylist[:10], max_workers=500)
 
         # results = ThreadPool(600).imap_unordered(self.get_dict_of_json_files,self.s3_file_keylist)
         # for i,r in tqdm(enumerate(results,1),desc='Downloading Json_files',position=0):

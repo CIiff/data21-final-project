@@ -47,7 +47,7 @@ class weaknessesCandidateJunc(CreateDB):
             # logger.info(df.head(5))
             if df.empty == False:
                 for row in self.engine.execute("SELECT weakness,weakness_id FROM weaknesses "):
-                    df['weaknesses'].replace({row[0]: row[1]}, inplace=True)
+                    df['weaknesses'].replace({row[0]: str(row[1])}, inplace=True)
                 # logger.info(df.head(5))
                 for row in tqdm(self.engine.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "), unit='weakness', desc='Updating_Candidate_Weaknesses', position=0):
                     # logger.info(f'replacements {row}')
@@ -56,8 +56,8 @@ class weaknessesCandidateJunc(CreateDB):
                 # logger.info(df.head(5))
                 # df = df.rename(columns=({'candidate_name':'candidate_id','weaknesses':'weakness_id'}))
                 return df
-        else:
-            return pd.DataFrame()
+            else:
+                return pd.DataFrame()
 
     def sample_query(self):
         logger.info('WEAKNESSES_JUNC_TABLE \n')
@@ -69,15 +69,15 @@ class weaknessesCandidateJunc(CreateDB):
 
     def create_weaknessses_junc_table(self):
 
-        try:
-            self.create_table()
-            if weakness_junc_df.empty == False:
-                self.data_entry()
-            else:
-                logger.info('No new data to load to Weaknesses_junction table')
+    
+        self.create_table()
+        if weakness_junc_df.empty == False:
+            self.data_entry()
+        else:
+            logger.info('No new data to load to Weaknesses_junction table')
         # self.sample_query()
-        except AttributeError:
-            pass
+        # except AttributeError:
+        #     pass
 
 
 weaknesses_junc_sql_tbl = weaknessesCandidateJunc()

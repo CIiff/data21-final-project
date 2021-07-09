@@ -47,7 +47,6 @@ class strengthsTable(CreateDB):
     def create_strengths_table(self):
 
         self.create_table()
-        print(strengths_df)
         if strengths_df.empty == False:
             self.data_entry()
         else:

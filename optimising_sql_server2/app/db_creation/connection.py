@@ -31,12 +31,12 @@ driver = 'ODBC Driver 17 for SQL Server'
 class CreateDB:
 
     databaseName = 'master'
-    database = 'new_db'
+    database = 'newTest'
 
     def __init__(self):
 
         self.connect_string = urllib.parse.quote_plus(
-            f'DRIVER={driver};Server={server};Database={self.databaseName};UID=SA;PWD=Passw0rd2018')
+            f'DRIVER={driver};Server={server};Database={self.databaseName};UID={username};PWD={password}')
         self.engine = sqlalchemy.create_engine(
             f'mssql+pyodbc:///?odbc_connect={self.connect_string}&autocommit=true')
         self.db = self.engine.connect()
@@ -48,10 +48,12 @@ class CreateDB:
             logger.info(f'Connecting to {i}\n')
 
     def check_for_db(self):
+        '''
+        Checks desired database, if not exists , the database is 
+        created.
+        '''
         dbs = [db[0] for db in self.engine.execute(
             'SELECT name FROM sys.databases')]
-        # logger.info(dbs)
-        # global databaseName
         if self.database not in dbs:
             logger.info(f'Creating new database: {self.database}')
             self.engine.execute(f'CREATE DATABASE {self.database}')

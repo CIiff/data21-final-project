@@ -70,7 +70,6 @@ class strengthsCandidateJunc(CreateDB):
     def create_strengths_junc_table(self):
 
         self.create_table()
-        print(strengths_junc_df)
         if strengths_junc_df.empty == False:
             self.data_entry()
         else:

@@ -48,6 +48,7 @@ class staffTable(CreateDB):
                             department
                         from recruiting_staff_df
                         """).to_sql('staff', connection, index=False, if_exists='append')
+            logger.info('\nLOADING TO STAFF SQL TABLE\n')
 
             self.pysqldf("""
                             SELECT
@@ -89,7 +90,10 @@ if candidate_df.empty == False:
     recruiting_staff_df = recruiting_staff_df[['staff_name', 'department']]
     recruiting_staff_df = recruiting_staff_df.dropna()
 
-    print(recruiting_staff_df.values.tolist())
+else:
+    recruiting_staff_df = pd.DataFrame()
+
+if weekly_performances_df.empty == False:
     # set up the trainers dataframe
     trainer_df = weekly_performances_df.drop_duplicates(subset=['trainer'])
     trainer_df = trainer_df[trainer_df['trainer'] != 'nan']
@@ -98,6 +102,9 @@ if candidate_df.empty == False:
     trainer_staff_df = trainer_staff_df.rename(
         columns={'trainer': 'staff_name'})
     trainer_staff_df = trainer_staff_df[['staff_name', 'department']]
+
+else:
+    trainer_staff_df = pd.DataFrame()
 
 
 staff_sql_tbl = staffTable()

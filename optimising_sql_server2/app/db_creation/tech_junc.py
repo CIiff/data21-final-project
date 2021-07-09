@@ -49,7 +49,7 @@ class techCandidateJunc(CreateDB):
             # logger.info(df.head(5))
             if df.empty == False:
                 for row in self.engine.execute("SELECT tech,tech_id FROM tech "):
-                    df['tech_name'].replace({row[0]: row[1]}, inplace=True)
+                    df['tech_name'].replace({row[0]: str(row[1])}, inplace=True)
                 # logger.info(df.head(5))
                 for row in self.engine.execute("SELECT candidate_name,candidate_id FROM candidate ORDER BY candidate_name "):
                     # logger.info(f'replacements {row}')
