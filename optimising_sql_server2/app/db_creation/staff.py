@@ -42,23 +42,25 @@ class staffTable(CreateDB):
 
     def staff_data_entry(self):
         with self.engine.connect() as connection:
-            self.pysqldf("""
-                        SELECT
-                            staff_name,
-                            department
-                        from recruiting_staff_df
-                        """).to_sql('staff', connection, index=False, if_exists='append')
-            logger.info('\nLOADING TO STAFF SQL TABLE\n')
-
-            self.pysqldf("""
+            if recruiting_staff_df.empty != True:
+                self.pysqldf("""
                             SELECT
                                 staff_name,
                                 department
-                            from trainer_staff_df 
-                            
+                            from recruiting_staff_df
                             """).to_sql('staff', connection, index=False, if_exists='append')
+                logger.info('\nLOADING TO STAFF SQL TABLE\n')
 
-            logger.info('\nLOADING TO STAFF SQL TABLE\n')
+            if trainer_staff_df.empty != True:
+                self.pysqldf("""
+                                SELECT
+                                    staff_name,
+                                    department
+                                from trainer_staff_df 
+                                
+                                """).to_sql('staff', connection, index=False, if_exists='append')
+
+                logger.info('\nLOADING TO STAFF SQL TABLE\n')
 
     def sample_query(self):
         logger.info('STAFF TABLE \n')
